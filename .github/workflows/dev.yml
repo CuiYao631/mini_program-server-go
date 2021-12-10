@@ -57,7 +57,7 @@ jobs:
           context: .
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: registry.cn-hangzhou.aliyuncs.com/xiaocui_server/mini_program-server-go
+          tags: registry.cn-hangzhou.aliyuncs.com/xiaocui_server/mini_program-server-go:dev
 
       - uses: act10ns/slack@v1
         with:
