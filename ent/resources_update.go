@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/CuiYao631/mini_program-server-go/ent/predicate"
 	"github.com/CuiYao631/mini_program-server-go/ent/resources"
+	"github.com/CuiYao631/mini_program-server-go/ent/tag"
 )
 
 // ResourcesUpdate is the builder for updating Resources entities.
@@ -27,9 +28,9 @@ func (ru *ResourcesUpdate) Where(ps ...predicate.Resources) *ResourcesUpdate {
 	return ru
 }
 
-// SetTitle sets the "title" field.
-func (ru *ResourcesUpdate) SetTitle(s string) *ResourcesUpdate {
-	ru.mutation.SetTitle(s)
+// SetName sets the "name" field.
+func (ru *ResourcesUpdate) SetName(s string) *ResourcesUpdate {
+	ru.mutation.SetName(s)
 	return ru
 }
 
@@ -39,9 +40,17 @@ func (ru *ResourcesUpdate) SetIcon(s string) *ResourcesUpdate {
 	return ru
 }
 
-// SetTag sets the "tag" field.
-func (ru *ResourcesUpdate) SetTag(s string) *ResourcesUpdate {
-	ru.mutation.SetTag(s)
+// SetNillableIcon sets the "icon" field if the given value is not nil.
+func (ru *ResourcesUpdate) SetNillableIcon(s *string) *ResourcesUpdate {
+	if s != nil {
+		ru.SetIcon(*s)
+	}
+	return ru
+}
+
+// ClearIcon clears the value of the "icon" field.
+func (ru *ResourcesUpdate) ClearIcon() *ResourcesUpdate {
+	ru.mutation.ClearIcon()
 	return ru
 }
 
@@ -54,18 +63,6 @@ func (ru *ResourcesUpdate) SetDesc(s string) *ResourcesUpdate {
 // SetURL sets the "url" field.
 func (ru *ResourcesUpdate) SetURL(s string) *ResourcesUpdate {
 	ru.mutation.SetURL(s)
-	return ru
-}
-
-// SetCreatedUserName sets the "created_user_name" field.
-func (ru *ResourcesUpdate) SetCreatedUserName(s string) *ResourcesUpdate {
-	ru.mutation.SetCreatedUserName(s)
-	return ru
-}
-
-// SetUpdatedUserName sets the "updated_user_name" field.
-func (ru *ResourcesUpdate) SetUpdatedUserName(s string) *ResourcesUpdate {
-	ru.mutation.SetUpdatedUserName(s)
 	return ru
 }
 
@@ -89,9 +86,45 @@ func (ru *ResourcesUpdate) SetUpdatedAt(t time.Time) *ResourcesUpdate {
 	return ru
 }
 
+// AddTagIDs adds the "tag" edge to the Tag entity by IDs.
+func (ru *ResourcesUpdate) AddTagIDs(ids ...string) *ResourcesUpdate {
+	ru.mutation.AddTagIDs(ids...)
+	return ru
+}
+
+// AddTag adds the "tag" edges to the Tag entity.
+func (ru *ResourcesUpdate) AddTag(t ...*Tag) *ResourcesUpdate {
+	ids := make([]string, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return ru.AddTagIDs(ids...)
+}
+
 // Mutation returns the ResourcesMutation object of the builder.
 func (ru *ResourcesUpdate) Mutation() *ResourcesMutation {
 	return ru.mutation
+}
+
+// ClearTag clears all "tag" edges to the Tag entity.
+func (ru *ResourcesUpdate) ClearTag() *ResourcesUpdate {
+	ru.mutation.ClearTag()
+	return ru
+}
+
+// RemoveTagIDs removes the "tag" edge to Tag entities by IDs.
+func (ru *ResourcesUpdate) RemoveTagIDs(ids ...string) *ResourcesUpdate {
+	ru.mutation.RemoveTagIDs(ids...)
+	return ru
+}
+
+// RemoveTag removes "tag" edges to Tag entities.
+func (ru *ResourcesUpdate) RemoveTag(t ...*Tag) *ResourcesUpdate {
+	ids := make([]string, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return ru.RemoveTagIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -175,11 +208,11 @@ func (ru *ResourcesUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
-	if value, ok := ru.mutation.Title(); ok {
+	if value, ok := ru.mutation.Name(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: resources.FieldTitle,
+			Column: resources.FieldName,
 		})
 	}
 	if value, ok := ru.mutation.Icon(); ok {
@@ -189,11 +222,10 @@ func (ru *ResourcesUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: resources.FieldIcon,
 		})
 	}
-	if value, ok := ru.mutation.Tag(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+	if ru.mutation.IconCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
-			Value:  value,
-			Column: resources.FieldTag,
+			Column: resources.FieldIcon,
 		})
 	}
 	if value, ok := ru.mutation.Desc(); ok {
@@ -210,20 +242,6 @@ func (ru *ResourcesUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: resources.FieldURL,
 		})
 	}
-	if value, ok := ru.mutation.CreatedUserName(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: resources.FieldCreatedUserName,
-		})
-	}
-	if value, ok := ru.mutation.UpdatedUserName(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: resources.FieldUpdatedUserName,
-		})
-	}
 	if value, ok := ru.mutation.CreatedAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
@@ -237,6 +255,60 @@ func (ru *ResourcesUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Value:  value,
 			Column: resources.FieldUpdatedAt,
 		})
+	}
+	if ru.mutation.TagCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   resources.TagTable,
+			Columns: resources.TagPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeString,
+					Column: tag.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ru.mutation.RemovedTagIDs(); len(nodes) > 0 && !ru.mutation.TagCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   resources.TagTable,
+			Columns: resources.TagPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeString,
+					Column: tag.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ru.mutation.TagIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   resources.TagTable,
+			Columns: resources.TagPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeString,
+					Column: tag.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, ru.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -257,9 +329,9 @@ type ResourcesUpdateOne struct {
 	mutation *ResourcesMutation
 }
 
-// SetTitle sets the "title" field.
-func (ruo *ResourcesUpdateOne) SetTitle(s string) *ResourcesUpdateOne {
-	ruo.mutation.SetTitle(s)
+// SetName sets the "name" field.
+func (ruo *ResourcesUpdateOne) SetName(s string) *ResourcesUpdateOne {
+	ruo.mutation.SetName(s)
 	return ruo
 }
 
@@ -269,9 +341,17 @@ func (ruo *ResourcesUpdateOne) SetIcon(s string) *ResourcesUpdateOne {
 	return ruo
 }
 
-// SetTag sets the "tag" field.
-func (ruo *ResourcesUpdateOne) SetTag(s string) *ResourcesUpdateOne {
-	ruo.mutation.SetTag(s)
+// SetNillableIcon sets the "icon" field if the given value is not nil.
+func (ruo *ResourcesUpdateOne) SetNillableIcon(s *string) *ResourcesUpdateOne {
+	if s != nil {
+		ruo.SetIcon(*s)
+	}
+	return ruo
+}
+
+// ClearIcon clears the value of the "icon" field.
+func (ruo *ResourcesUpdateOne) ClearIcon() *ResourcesUpdateOne {
+	ruo.mutation.ClearIcon()
 	return ruo
 }
 
@@ -284,18 +364,6 @@ func (ruo *ResourcesUpdateOne) SetDesc(s string) *ResourcesUpdateOne {
 // SetURL sets the "url" field.
 func (ruo *ResourcesUpdateOne) SetURL(s string) *ResourcesUpdateOne {
 	ruo.mutation.SetURL(s)
-	return ruo
-}
-
-// SetCreatedUserName sets the "created_user_name" field.
-func (ruo *ResourcesUpdateOne) SetCreatedUserName(s string) *ResourcesUpdateOne {
-	ruo.mutation.SetCreatedUserName(s)
-	return ruo
-}
-
-// SetUpdatedUserName sets the "updated_user_name" field.
-func (ruo *ResourcesUpdateOne) SetUpdatedUserName(s string) *ResourcesUpdateOne {
-	ruo.mutation.SetUpdatedUserName(s)
 	return ruo
 }
 
@@ -319,9 +387,45 @@ func (ruo *ResourcesUpdateOne) SetUpdatedAt(t time.Time) *ResourcesUpdateOne {
 	return ruo
 }
 
+// AddTagIDs adds the "tag" edge to the Tag entity by IDs.
+func (ruo *ResourcesUpdateOne) AddTagIDs(ids ...string) *ResourcesUpdateOne {
+	ruo.mutation.AddTagIDs(ids...)
+	return ruo
+}
+
+// AddTag adds the "tag" edges to the Tag entity.
+func (ruo *ResourcesUpdateOne) AddTag(t ...*Tag) *ResourcesUpdateOne {
+	ids := make([]string, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return ruo.AddTagIDs(ids...)
+}
+
 // Mutation returns the ResourcesMutation object of the builder.
 func (ruo *ResourcesUpdateOne) Mutation() *ResourcesMutation {
 	return ruo.mutation
+}
+
+// ClearTag clears all "tag" edges to the Tag entity.
+func (ruo *ResourcesUpdateOne) ClearTag() *ResourcesUpdateOne {
+	ruo.mutation.ClearTag()
+	return ruo
+}
+
+// RemoveTagIDs removes the "tag" edge to Tag entities by IDs.
+func (ruo *ResourcesUpdateOne) RemoveTagIDs(ids ...string) *ResourcesUpdateOne {
+	ruo.mutation.RemoveTagIDs(ids...)
+	return ruo
+}
+
+// RemoveTag removes "tag" edges to Tag entities.
+func (ruo *ResourcesUpdateOne) RemoveTag(t ...*Tag) *ResourcesUpdateOne {
+	ids := make([]string, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return ruo.RemoveTagIDs(ids...)
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
@@ -429,11 +533,11 @@ func (ruo *ResourcesUpdateOne) sqlSave(ctx context.Context) (_node *Resources, e
 			}
 		}
 	}
-	if value, ok := ruo.mutation.Title(); ok {
+	if value, ok := ruo.mutation.Name(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: resources.FieldTitle,
+			Column: resources.FieldName,
 		})
 	}
 	if value, ok := ruo.mutation.Icon(); ok {
@@ -443,11 +547,10 @@ func (ruo *ResourcesUpdateOne) sqlSave(ctx context.Context) (_node *Resources, e
 			Column: resources.FieldIcon,
 		})
 	}
-	if value, ok := ruo.mutation.Tag(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+	if ruo.mutation.IconCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
-			Value:  value,
-			Column: resources.FieldTag,
+			Column: resources.FieldIcon,
 		})
 	}
 	if value, ok := ruo.mutation.Desc(); ok {
@@ -464,20 +567,6 @@ func (ruo *ResourcesUpdateOne) sqlSave(ctx context.Context) (_node *Resources, e
 			Column: resources.FieldURL,
 		})
 	}
-	if value, ok := ruo.mutation.CreatedUserName(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: resources.FieldCreatedUserName,
-		})
-	}
-	if value, ok := ruo.mutation.UpdatedUserName(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: resources.FieldUpdatedUserName,
-		})
-	}
 	if value, ok := ruo.mutation.CreatedAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
@@ -491,6 +580,60 @@ func (ruo *ResourcesUpdateOne) sqlSave(ctx context.Context) (_node *Resources, e
 			Value:  value,
 			Column: resources.FieldUpdatedAt,
 		})
+	}
+	if ruo.mutation.TagCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   resources.TagTable,
+			Columns: resources.TagPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeString,
+					Column: tag.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ruo.mutation.RemovedTagIDs(); len(nodes) > 0 && !ruo.mutation.TagCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   resources.TagTable,
+			Columns: resources.TagPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeString,
+					Column: tag.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ruo.mutation.TagIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   resources.TagTable,
+			Columns: resources.TagPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeString,
+					Column: tag.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_node = &Resources{config: ruo.config}
 	_spec.Assign = _node.assignValues

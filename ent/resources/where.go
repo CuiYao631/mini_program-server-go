@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/CuiYao631/mini_program-server-go/ent/predicate"
 )
 
@@ -92,10 +93,10 @@ func IDLTE(id string) predicate.Resources {
 	})
 }
 
-// Title applies equality check predicate on the "title" field. It's identical to TitleEQ.
-func Title(v string) predicate.Resources {
+// Name applies equality check predicate on the "name" field. It's identical to NameEQ.
+func Name(v string) predicate.Resources {
 	return predicate.Resources(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldTitle), v))
+		s.Where(sql.EQ(s.C(FieldName), v))
 	})
 }
 
@@ -103,13 +104,6 @@ func Title(v string) predicate.Resources {
 func Icon(v string) predicate.Resources {
 	return predicate.Resources(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldIcon), v))
-	})
-}
-
-// Tag applies equality check predicate on the "tag" field. It's identical to TagEQ.
-func Tag(v string) predicate.Resources {
-	return predicate.Resources(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldTag), v))
 	})
 }
 
@@ -127,20 +121,6 @@ func URL(v string) predicate.Resources {
 	})
 }
 
-// CreatedUserName applies equality check predicate on the "created_user_name" field. It's identical to CreatedUserNameEQ.
-func CreatedUserName(v string) predicate.Resources {
-	return predicate.Resources(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldCreatedUserName), v))
-	})
-}
-
-// UpdatedUserName applies equality check predicate on the "updated_user_name" field. It's identical to UpdatedUserNameEQ.
-func UpdatedUserName(v string) predicate.Resources {
-	return predicate.Resources(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldUpdatedUserName), v))
-	})
-}
-
 // CreatedAt applies equality check predicate on the "created_at" field. It's identical to CreatedAtEQ.
 func CreatedAt(v time.Time) predicate.Resources {
 	return predicate.Resources(func(s *sql.Selector) {
@@ -155,22 +135,22 @@ func UpdatedAt(v time.Time) predicate.Resources {
 	})
 }
 
-// TitleEQ applies the EQ predicate on the "title" field.
-func TitleEQ(v string) predicate.Resources {
+// NameEQ applies the EQ predicate on the "name" field.
+func NameEQ(v string) predicate.Resources {
 	return predicate.Resources(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldTitle), v))
+		s.Where(sql.EQ(s.C(FieldName), v))
 	})
 }
 
-// TitleNEQ applies the NEQ predicate on the "title" field.
-func TitleNEQ(v string) predicate.Resources {
+// NameNEQ applies the NEQ predicate on the "name" field.
+func NameNEQ(v string) predicate.Resources {
 	return predicate.Resources(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldTitle), v))
+		s.Where(sql.NEQ(s.C(FieldName), v))
 	})
 }
 
-// TitleIn applies the In predicate on the "title" field.
-func TitleIn(vs ...string) predicate.Resources {
+// NameIn applies the In predicate on the "name" field.
+func NameIn(vs ...string) predicate.Resources {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -182,12 +162,12 @@ func TitleIn(vs ...string) predicate.Resources {
 			s.Where(sql.False())
 			return
 		}
-		s.Where(sql.In(s.C(FieldTitle), v...))
+		s.Where(sql.In(s.C(FieldName), v...))
 	})
 }
 
-// TitleNotIn applies the NotIn predicate on the "title" field.
-func TitleNotIn(vs ...string) predicate.Resources {
+// NameNotIn applies the NotIn predicate on the "name" field.
+func NameNotIn(vs ...string) predicate.Resources {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -199,70 +179,70 @@ func TitleNotIn(vs ...string) predicate.Resources {
 			s.Where(sql.False())
 			return
 		}
-		s.Where(sql.NotIn(s.C(FieldTitle), v...))
+		s.Where(sql.NotIn(s.C(FieldName), v...))
 	})
 }
 
-// TitleGT applies the GT predicate on the "title" field.
-func TitleGT(v string) predicate.Resources {
+// NameGT applies the GT predicate on the "name" field.
+func NameGT(v string) predicate.Resources {
 	return predicate.Resources(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldTitle), v))
+		s.Where(sql.GT(s.C(FieldName), v))
 	})
 }
 
-// TitleGTE applies the GTE predicate on the "title" field.
-func TitleGTE(v string) predicate.Resources {
+// NameGTE applies the GTE predicate on the "name" field.
+func NameGTE(v string) predicate.Resources {
 	return predicate.Resources(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldTitle), v))
+		s.Where(sql.GTE(s.C(FieldName), v))
 	})
 }
 
-// TitleLT applies the LT predicate on the "title" field.
-func TitleLT(v string) predicate.Resources {
+// NameLT applies the LT predicate on the "name" field.
+func NameLT(v string) predicate.Resources {
 	return predicate.Resources(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldTitle), v))
+		s.Where(sql.LT(s.C(FieldName), v))
 	})
 }
 
-// TitleLTE applies the LTE predicate on the "title" field.
-func TitleLTE(v string) predicate.Resources {
+// NameLTE applies the LTE predicate on the "name" field.
+func NameLTE(v string) predicate.Resources {
 	return predicate.Resources(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldTitle), v))
+		s.Where(sql.LTE(s.C(FieldName), v))
 	})
 }
 
-// TitleContains applies the Contains predicate on the "title" field.
-func TitleContains(v string) predicate.Resources {
+// NameContains applies the Contains predicate on the "name" field.
+func NameContains(v string) predicate.Resources {
 	return predicate.Resources(func(s *sql.Selector) {
-		s.Where(sql.Contains(s.C(FieldTitle), v))
+		s.Where(sql.Contains(s.C(FieldName), v))
 	})
 }
 
-// TitleHasPrefix applies the HasPrefix predicate on the "title" field.
-func TitleHasPrefix(v string) predicate.Resources {
+// NameHasPrefix applies the HasPrefix predicate on the "name" field.
+func NameHasPrefix(v string) predicate.Resources {
 	return predicate.Resources(func(s *sql.Selector) {
-		s.Where(sql.HasPrefix(s.C(FieldTitle), v))
+		s.Where(sql.HasPrefix(s.C(FieldName), v))
 	})
 }
 
-// TitleHasSuffix applies the HasSuffix predicate on the "title" field.
-func TitleHasSuffix(v string) predicate.Resources {
+// NameHasSuffix applies the HasSuffix predicate on the "name" field.
+func NameHasSuffix(v string) predicate.Resources {
 	return predicate.Resources(func(s *sql.Selector) {
-		s.Where(sql.HasSuffix(s.C(FieldTitle), v))
+		s.Where(sql.HasSuffix(s.C(FieldName), v))
 	})
 }
 
-// TitleEqualFold applies the EqualFold predicate on the "title" field.
-func TitleEqualFold(v string) predicate.Resources {
+// NameEqualFold applies the EqualFold predicate on the "name" field.
+func NameEqualFold(v string) predicate.Resources {
 	return predicate.Resources(func(s *sql.Selector) {
-		s.Where(sql.EqualFold(s.C(FieldTitle), v))
+		s.Where(sql.EqualFold(s.C(FieldName), v))
 	})
 }
 
-// TitleContainsFold applies the ContainsFold predicate on the "title" field.
-func TitleContainsFold(v string) predicate.Resources {
+// NameContainsFold applies the ContainsFold predicate on the "name" field.
+func NameContainsFold(v string) predicate.Resources {
 	return predicate.Resources(func(s *sql.Selector) {
-		s.Where(sql.ContainsFold(s.C(FieldTitle), v))
+		s.Where(sql.ContainsFold(s.C(FieldName), v))
 	})
 }
 
@@ -363,6 +343,20 @@ func IconHasSuffix(v string) predicate.Resources {
 	})
 }
 
+// IconIsNil applies the IsNil predicate on the "icon" field.
+func IconIsNil() predicate.Resources {
+	return predicate.Resources(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldIcon)))
+	})
+}
+
+// IconNotNil applies the NotNil predicate on the "icon" field.
+func IconNotNil() predicate.Resources {
+	return predicate.Resources(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldIcon)))
+	})
+}
+
 // IconEqualFold applies the EqualFold predicate on the "icon" field.
 func IconEqualFold(v string) predicate.Resources {
 	return predicate.Resources(func(s *sql.Selector) {
@@ -374,117 +368,6 @@ func IconEqualFold(v string) predicate.Resources {
 func IconContainsFold(v string) predicate.Resources {
 	return predicate.Resources(func(s *sql.Selector) {
 		s.Where(sql.ContainsFold(s.C(FieldIcon), v))
-	})
-}
-
-// TagEQ applies the EQ predicate on the "tag" field.
-func TagEQ(v string) predicate.Resources {
-	return predicate.Resources(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldTag), v))
-	})
-}
-
-// TagNEQ applies the NEQ predicate on the "tag" field.
-func TagNEQ(v string) predicate.Resources {
-	return predicate.Resources(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldTag), v))
-	})
-}
-
-// TagIn applies the In predicate on the "tag" field.
-func TagIn(vs ...string) predicate.Resources {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Resources(func(s *sql.Selector) {
-		// if not arguments were provided, append the FALSE constants,
-		// since we can't apply "IN ()". This will make this predicate falsy.
-		if len(v) == 0 {
-			s.Where(sql.False())
-			return
-		}
-		s.Where(sql.In(s.C(FieldTag), v...))
-	})
-}
-
-// TagNotIn applies the NotIn predicate on the "tag" field.
-func TagNotIn(vs ...string) predicate.Resources {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Resources(func(s *sql.Selector) {
-		// if not arguments were provided, append the FALSE constants,
-		// since we can't apply "IN ()". This will make this predicate falsy.
-		if len(v) == 0 {
-			s.Where(sql.False())
-			return
-		}
-		s.Where(sql.NotIn(s.C(FieldTag), v...))
-	})
-}
-
-// TagGT applies the GT predicate on the "tag" field.
-func TagGT(v string) predicate.Resources {
-	return predicate.Resources(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldTag), v))
-	})
-}
-
-// TagGTE applies the GTE predicate on the "tag" field.
-func TagGTE(v string) predicate.Resources {
-	return predicate.Resources(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldTag), v))
-	})
-}
-
-// TagLT applies the LT predicate on the "tag" field.
-func TagLT(v string) predicate.Resources {
-	return predicate.Resources(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldTag), v))
-	})
-}
-
-// TagLTE applies the LTE predicate on the "tag" field.
-func TagLTE(v string) predicate.Resources {
-	return predicate.Resources(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldTag), v))
-	})
-}
-
-// TagContains applies the Contains predicate on the "tag" field.
-func TagContains(v string) predicate.Resources {
-	return predicate.Resources(func(s *sql.Selector) {
-		s.Where(sql.Contains(s.C(FieldTag), v))
-	})
-}
-
-// TagHasPrefix applies the HasPrefix predicate on the "tag" field.
-func TagHasPrefix(v string) predicate.Resources {
-	return predicate.Resources(func(s *sql.Selector) {
-		s.Where(sql.HasPrefix(s.C(FieldTag), v))
-	})
-}
-
-// TagHasSuffix applies the HasSuffix predicate on the "tag" field.
-func TagHasSuffix(v string) predicate.Resources {
-	return predicate.Resources(func(s *sql.Selector) {
-		s.Where(sql.HasSuffix(s.C(FieldTag), v))
-	})
-}
-
-// TagEqualFold applies the EqualFold predicate on the "tag" field.
-func TagEqualFold(v string) predicate.Resources {
-	return predicate.Resources(func(s *sql.Selector) {
-		s.Where(sql.EqualFold(s.C(FieldTag), v))
-	})
-}
-
-// TagContainsFold applies the ContainsFold predicate on the "tag" field.
-func TagContainsFold(v string) predicate.Resources {
-	return predicate.Resources(func(s *sql.Selector) {
-		s.Where(sql.ContainsFold(s.C(FieldTag), v))
 	})
 }
 
@@ -710,228 +593,6 @@ func URLContainsFold(v string) predicate.Resources {
 	})
 }
 
-// CreatedUserNameEQ applies the EQ predicate on the "created_user_name" field.
-func CreatedUserNameEQ(v string) predicate.Resources {
-	return predicate.Resources(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldCreatedUserName), v))
-	})
-}
-
-// CreatedUserNameNEQ applies the NEQ predicate on the "created_user_name" field.
-func CreatedUserNameNEQ(v string) predicate.Resources {
-	return predicate.Resources(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldCreatedUserName), v))
-	})
-}
-
-// CreatedUserNameIn applies the In predicate on the "created_user_name" field.
-func CreatedUserNameIn(vs ...string) predicate.Resources {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Resources(func(s *sql.Selector) {
-		// if not arguments were provided, append the FALSE constants,
-		// since we can't apply "IN ()". This will make this predicate falsy.
-		if len(v) == 0 {
-			s.Where(sql.False())
-			return
-		}
-		s.Where(sql.In(s.C(FieldCreatedUserName), v...))
-	})
-}
-
-// CreatedUserNameNotIn applies the NotIn predicate on the "created_user_name" field.
-func CreatedUserNameNotIn(vs ...string) predicate.Resources {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Resources(func(s *sql.Selector) {
-		// if not arguments were provided, append the FALSE constants,
-		// since we can't apply "IN ()". This will make this predicate falsy.
-		if len(v) == 0 {
-			s.Where(sql.False())
-			return
-		}
-		s.Where(sql.NotIn(s.C(FieldCreatedUserName), v...))
-	})
-}
-
-// CreatedUserNameGT applies the GT predicate on the "created_user_name" field.
-func CreatedUserNameGT(v string) predicate.Resources {
-	return predicate.Resources(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldCreatedUserName), v))
-	})
-}
-
-// CreatedUserNameGTE applies the GTE predicate on the "created_user_name" field.
-func CreatedUserNameGTE(v string) predicate.Resources {
-	return predicate.Resources(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldCreatedUserName), v))
-	})
-}
-
-// CreatedUserNameLT applies the LT predicate on the "created_user_name" field.
-func CreatedUserNameLT(v string) predicate.Resources {
-	return predicate.Resources(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldCreatedUserName), v))
-	})
-}
-
-// CreatedUserNameLTE applies the LTE predicate on the "created_user_name" field.
-func CreatedUserNameLTE(v string) predicate.Resources {
-	return predicate.Resources(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldCreatedUserName), v))
-	})
-}
-
-// CreatedUserNameContains applies the Contains predicate on the "created_user_name" field.
-func CreatedUserNameContains(v string) predicate.Resources {
-	return predicate.Resources(func(s *sql.Selector) {
-		s.Where(sql.Contains(s.C(FieldCreatedUserName), v))
-	})
-}
-
-// CreatedUserNameHasPrefix applies the HasPrefix predicate on the "created_user_name" field.
-func CreatedUserNameHasPrefix(v string) predicate.Resources {
-	return predicate.Resources(func(s *sql.Selector) {
-		s.Where(sql.HasPrefix(s.C(FieldCreatedUserName), v))
-	})
-}
-
-// CreatedUserNameHasSuffix applies the HasSuffix predicate on the "created_user_name" field.
-func CreatedUserNameHasSuffix(v string) predicate.Resources {
-	return predicate.Resources(func(s *sql.Selector) {
-		s.Where(sql.HasSuffix(s.C(FieldCreatedUserName), v))
-	})
-}
-
-// CreatedUserNameEqualFold applies the EqualFold predicate on the "created_user_name" field.
-func CreatedUserNameEqualFold(v string) predicate.Resources {
-	return predicate.Resources(func(s *sql.Selector) {
-		s.Where(sql.EqualFold(s.C(FieldCreatedUserName), v))
-	})
-}
-
-// CreatedUserNameContainsFold applies the ContainsFold predicate on the "created_user_name" field.
-func CreatedUserNameContainsFold(v string) predicate.Resources {
-	return predicate.Resources(func(s *sql.Selector) {
-		s.Where(sql.ContainsFold(s.C(FieldCreatedUserName), v))
-	})
-}
-
-// UpdatedUserNameEQ applies the EQ predicate on the "updated_user_name" field.
-func UpdatedUserNameEQ(v string) predicate.Resources {
-	return predicate.Resources(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldUpdatedUserName), v))
-	})
-}
-
-// UpdatedUserNameNEQ applies the NEQ predicate on the "updated_user_name" field.
-func UpdatedUserNameNEQ(v string) predicate.Resources {
-	return predicate.Resources(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldUpdatedUserName), v))
-	})
-}
-
-// UpdatedUserNameIn applies the In predicate on the "updated_user_name" field.
-func UpdatedUserNameIn(vs ...string) predicate.Resources {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Resources(func(s *sql.Selector) {
-		// if not arguments were provided, append the FALSE constants,
-		// since we can't apply "IN ()". This will make this predicate falsy.
-		if len(v) == 0 {
-			s.Where(sql.False())
-			return
-		}
-		s.Where(sql.In(s.C(FieldUpdatedUserName), v...))
-	})
-}
-
-// UpdatedUserNameNotIn applies the NotIn predicate on the "updated_user_name" field.
-func UpdatedUserNameNotIn(vs ...string) predicate.Resources {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Resources(func(s *sql.Selector) {
-		// if not arguments were provided, append the FALSE constants,
-		// since we can't apply "IN ()". This will make this predicate falsy.
-		if len(v) == 0 {
-			s.Where(sql.False())
-			return
-		}
-		s.Where(sql.NotIn(s.C(FieldUpdatedUserName), v...))
-	})
-}
-
-// UpdatedUserNameGT applies the GT predicate on the "updated_user_name" field.
-func UpdatedUserNameGT(v string) predicate.Resources {
-	return predicate.Resources(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldUpdatedUserName), v))
-	})
-}
-
-// UpdatedUserNameGTE applies the GTE predicate on the "updated_user_name" field.
-func UpdatedUserNameGTE(v string) predicate.Resources {
-	return predicate.Resources(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldUpdatedUserName), v))
-	})
-}
-
-// UpdatedUserNameLT applies the LT predicate on the "updated_user_name" field.
-func UpdatedUserNameLT(v string) predicate.Resources {
-	return predicate.Resources(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldUpdatedUserName), v))
-	})
-}
-
-// UpdatedUserNameLTE applies the LTE predicate on the "updated_user_name" field.
-func UpdatedUserNameLTE(v string) predicate.Resources {
-	return predicate.Resources(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldUpdatedUserName), v))
-	})
-}
-
-// UpdatedUserNameContains applies the Contains predicate on the "updated_user_name" field.
-func UpdatedUserNameContains(v string) predicate.Resources {
-	return predicate.Resources(func(s *sql.Selector) {
-		s.Where(sql.Contains(s.C(FieldUpdatedUserName), v))
-	})
-}
-
-// UpdatedUserNameHasPrefix applies the HasPrefix predicate on the "updated_user_name" field.
-func UpdatedUserNameHasPrefix(v string) predicate.Resources {
-	return predicate.Resources(func(s *sql.Selector) {
-		s.Where(sql.HasPrefix(s.C(FieldUpdatedUserName), v))
-	})
-}
-
-// UpdatedUserNameHasSuffix applies the HasSuffix predicate on the "updated_user_name" field.
-func UpdatedUserNameHasSuffix(v string) predicate.Resources {
-	return predicate.Resources(func(s *sql.Selector) {
-		s.Where(sql.HasSuffix(s.C(FieldUpdatedUserName), v))
-	})
-}
-
-// UpdatedUserNameEqualFold applies the EqualFold predicate on the "updated_user_name" field.
-func UpdatedUserNameEqualFold(v string) predicate.Resources {
-	return predicate.Resources(func(s *sql.Selector) {
-		s.Where(sql.EqualFold(s.C(FieldUpdatedUserName), v))
-	})
-}
-
-// UpdatedUserNameContainsFold applies the ContainsFold predicate on the "updated_user_name" field.
-func UpdatedUserNameContainsFold(v string) predicate.Resources {
-	return predicate.Resources(func(s *sql.Selector) {
-		s.Where(sql.ContainsFold(s.C(FieldUpdatedUserName), v))
-	})
-}
-
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.Resources {
 	return predicate.Resources(func(s *sql.Selector) {
@@ -1081,6 +742,34 @@ func UpdatedAtLT(v time.Time) predicate.Resources {
 func UpdatedAtLTE(v time.Time) predicate.Resources {
 	return predicate.Resources(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldUpdatedAt), v))
+	})
+}
+
+// HasTag applies the HasEdge predicate on the "tag" edge.
+func HasTag() predicate.Resources {
+	return predicate.Resources(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(TagTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, TagTable, TagPrimaryKey...),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasTagWith applies the HasEdge predicate on the "tag" edge with a given conditions (other predicates).
+func HasTagWith(preds ...predicate.Tag) predicate.Resources {
+	return predicate.Resources(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(TagInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, TagTable, TagPrimaryKey...),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
 	})
 }
 

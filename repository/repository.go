@@ -11,6 +11,7 @@ import "github.com/CuiYao631/mini_program-server-go/ent"
 
 type Repository interface {
 	User
+	Resources
 }
 type repository struct {
 	db *ent.Client

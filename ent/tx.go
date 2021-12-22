@@ -14,6 +14,8 @@ type Tx struct {
 	config
 	// Resources is the client for interacting with the Resources builders.
 	Resources *ResourcesClient
+	// Tag is the client for interacting with the Tag builders.
+	Tag *TagClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 
@@ -152,6 +154,7 @@ func (tx *Tx) Client() *Client {
 
 func (tx *Tx) init() {
 	tx.Resources = NewResourcesClient(tx.config)
+	tx.Tag = NewTagClient(tx.config)
 	tx.User = NewUserClient(tx.config)
 }
 

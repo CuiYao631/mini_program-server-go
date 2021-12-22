@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"database/sql/driver"
 	"errors"
 	"fmt"
 	"math"
@@ -13,6 +14,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/CuiYao631/mini_program-server-go/ent/predicate"
 	"github.com/CuiYao631/mini_program-server-go/ent/resources"
+	"github.com/CuiYao631/mini_program-server-go/ent/tag"
 )
 
 // ResourcesQuery is the builder for querying Resources entities.
@@ -24,6 +26,8 @@ type ResourcesQuery struct {
 	order      []OrderFunc
 	fields     []string
 	predicates []predicate.Resources
+	// eager-loading edges.
+	withTag *TagQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -58,6 +62,28 @@ func (rq *ResourcesQuery) Unique(unique bool) *ResourcesQuery {
 func (rq *ResourcesQuery) Order(o ...OrderFunc) *ResourcesQuery {
 	rq.order = append(rq.order, o...)
 	return rq
+}
+
+// QueryTag chains the current query on the "tag" edge.
+func (rq *ResourcesQuery) QueryTag() *TagQuery {
+	query := &TagQuery{config: rq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := rq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := rq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(resources.Table, resources.FieldID, selector),
+			sqlgraph.To(tag.Table, tag.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, resources.TagTable, resources.TagPrimaryKey...),
+		)
+		fromU = sqlgraph.SetNeighbors(rq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
 }
 
 // First returns the first Resources entity from the query.
@@ -241,10 +267,22 @@ func (rq *ResourcesQuery) Clone() *ResourcesQuery {
 		offset:     rq.offset,
 		order:      append([]OrderFunc{}, rq.order...),
 		predicates: append([]predicate.Resources{}, rq.predicates...),
+		withTag:    rq.withTag.Clone(),
 		// clone intermediate query.
 		sql:  rq.sql.Clone(),
 		path: rq.path,
 	}
+}
+
+// WithTag tells the query-builder to eager-load the nodes that are connected to
+// the "tag" edge. The optional arguments are used to configure the query builder of the edge.
+func (rq *ResourcesQuery) WithTag(opts ...func(*TagQuery)) *ResourcesQuery {
+	query := &TagQuery{config: rq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	rq.withTag = query
+	return rq
 }
 
 // GroupBy is used to group vertices by one or more fields/columns.
@@ -253,12 +291,12 @@ func (rq *ResourcesQuery) Clone() *ResourcesQuery {
 // Example:
 //
 //	var v []struct {
-//		Title string `json:"title,omitempty"`
+//		Name string `json:"name,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.Resources.Query().
-//		GroupBy(resources.FieldTitle).
+//		GroupBy(resources.FieldName).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 //
@@ -280,11 +318,11 @@ func (rq *ResourcesQuery) GroupBy(field string, fields ...string) *ResourcesGrou
 // Example:
 //
 //	var v []struct {
-//		Title string `json:"title,omitempty"`
+//		Name string `json:"name,omitempty"`
 //	}
 //
 //	client.Resources.Query().
-//		Select(resources.FieldTitle).
+//		Select(resources.FieldName).
 //		Scan(ctx, &v)
 //
 func (rq *ResourcesQuery) Select(fields ...string) *ResourcesSelect {
@@ -310,8 +348,11 @@ func (rq *ResourcesQuery) prepareQuery(ctx context.Context) error {
 
 func (rq *ResourcesQuery) sqlAll(ctx context.Context) ([]*Resources, error) {
 	var (
-		nodes = []*Resources{}
-		_spec = rq.querySpec()
+		nodes       = []*Resources{}
+		_spec       = rq.querySpec()
+		loadedTypes = [1]bool{
+			rq.withTag != nil,
+		}
 	)
 	_spec.ScanValues = func(columns []string) ([]interface{}, error) {
 		node := &Resources{config: rq.config}
@@ -323,6 +364,7 @@ func (rq *ResourcesQuery) sqlAll(ctx context.Context) ([]*Resources, error) {
 			return fmt.Errorf("ent: Assign called without calling ScanValues")
 		}
 		node := nodes[len(nodes)-1]
+		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
 	if err := sqlgraph.QueryNodes(ctx, rq.driver, _spec); err != nil {
@@ -331,6 +373,72 @@ func (rq *ResourcesQuery) sqlAll(ctx context.Context) ([]*Resources, error) {
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
+
+	if query := rq.withTag; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		ids := make(map[string]*Resources, len(nodes))
+		for _, node := range nodes {
+			ids[node.ID] = node
+			fks = append(fks, node.ID)
+			node.Edges.Tag = []*Tag{}
+		}
+		var (
+			edgeids []string
+			edges   = make(map[string][]*Resources)
+		)
+		_spec := &sqlgraph.EdgeQuerySpec{
+			Edge: &sqlgraph.EdgeSpec{
+				Inverse: true,
+				Table:   resources.TagTable,
+				Columns: resources.TagPrimaryKey,
+			},
+			Predicate: func(s *sql.Selector) {
+				s.Where(sql.InValues(resources.TagPrimaryKey[1], fks...))
+			},
+			ScanValues: func() [2]interface{} {
+				return [2]interface{}{new(sql.NullString), new(sql.NullString)}
+			},
+			Assign: func(out, in interface{}) error {
+				eout, ok := out.(*sql.NullString)
+				if !ok || eout == nil {
+					return fmt.Errorf("unexpected id value for edge-out")
+				}
+				ein, ok := in.(*sql.NullString)
+				if !ok || ein == nil {
+					return fmt.Errorf("unexpected id value for edge-in")
+				}
+				outValue := eout.String
+				inValue := ein.String
+				node, ok := ids[outValue]
+				if !ok {
+					return fmt.Errorf("unexpected node id in edges: %v", outValue)
+				}
+				if _, ok := edges[inValue]; !ok {
+					edgeids = append(edgeids, inValue)
+				}
+				edges[inValue] = append(edges[inValue], node)
+				return nil
+			},
+		}
+		if err := sqlgraph.QueryEdges(ctx, rq.driver, _spec); err != nil {
+			return nil, fmt.Errorf(`query edges "tag": %w`, err)
+		}
+		query.Where(tag.IDIn(edgeids...))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			nodes, ok := edges[n.ID]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected "tag" node returned %v`, n.ID)
+			}
+			for i := range nodes {
+				nodes[i].Edges.Tag = append(nodes[i].Edges.Tag, n)
+			}
+		}
+	}
+
 	return nodes, nil
 }
 

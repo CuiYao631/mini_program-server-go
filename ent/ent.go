@@ -9,6 +9,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/CuiYao631/mini_program-server-go/ent/resources"
+	"github.com/CuiYao631/mini_program-server-go/ent/tag"
 	"github.com/CuiYao631/mini_program-server-go/ent/user"
 )
 
@@ -31,6 +32,7 @@ type OrderFunc func(*sql.Selector)
 func columnChecker(table string) func(string) error {
 	checks := map[string]func(string) bool{
 		resources.Table: resources.ValidColumn,
+		tag.Table:       tag.ValidColumn,
 		user.Table:      user.ValidColumn,
 	}
 	check, ok := checks[table]

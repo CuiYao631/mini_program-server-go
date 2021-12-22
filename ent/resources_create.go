@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/CuiYao631/mini_program-server-go/ent/resources"
+	"github.com/CuiYao631/mini_program-server-go/ent/tag"
 )
 
 // ResourcesCreate is the builder for creating a Resources entity.
@@ -20,9 +21,9 @@ type ResourcesCreate struct {
 	hooks    []Hook
 }
 
-// SetTitle sets the "title" field.
-func (rc *ResourcesCreate) SetTitle(s string) *ResourcesCreate {
-	rc.mutation.SetTitle(s)
+// SetName sets the "name" field.
+func (rc *ResourcesCreate) SetName(s string) *ResourcesCreate {
+	rc.mutation.SetName(s)
 	return rc
 }
 
@@ -32,9 +33,11 @@ func (rc *ResourcesCreate) SetIcon(s string) *ResourcesCreate {
 	return rc
 }
 
-// SetTag sets the "tag" field.
-func (rc *ResourcesCreate) SetTag(s string) *ResourcesCreate {
-	rc.mutation.SetTag(s)
+// SetNillableIcon sets the "icon" field if the given value is not nil.
+func (rc *ResourcesCreate) SetNillableIcon(s *string) *ResourcesCreate {
+	if s != nil {
+		rc.SetIcon(*s)
+	}
 	return rc
 }
 
@@ -47,18 +50,6 @@ func (rc *ResourcesCreate) SetDesc(s string) *ResourcesCreate {
 // SetURL sets the "url" field.
 func (rc *ResourcesCreate) SetURL(s string) *ResourcesCreate {
 	rc.mutation.SetURL(s)
-	return rc
-}
-
-// SetCreatedUserName sets the "created_user_name" field.
-func (rc *ResourcesCreate) SetCreatedUserName(s string) *ResourcesCreate {
-	rc.mutation.SetCreatedUserName(s)
-	return rc
-}
-
-// SetUpdatedUserName sets the "updated_user_name" field.
-func (rc *ResourcesCreate) SetUpdatedUserName(s string) *ResourcesCreate {
-	rc.mutation.SetUpdatedUserName(s)
 	return rc
 }
 
@@ -102,6 +93,21 @@ func (rc *ResourcesCreate) SetNillableID(s *string) *ResourcesCreate {
 		rc.SetID(*s)
 	}
 	return rc
+}
+
+// AddTagIDs adds the "tag" edge to the Tag entity by IDs.
+func (rc *ResourcesCreate) AddTagIDs(ids ...string) *ResourcesCreate {
+	rc.mutation.AddTagIDs(ids...)
+	return rc
+}
+
+// AddTag adds the "tag" edges to the Tag entity.
+func (rc *ResourcesCreate) AddTag(t ...*Tag) *ResourcesCreate {
+	ids := make([]string, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return rc.AddTagIDs(ids...)
 }
 
 // Mutation returns the ResourcesMutation object of the builder.
@@ -191,26 +197,14 @@ func (rc *ResourcesCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (rc *ResourcesCreate) check() error {
-	if _, ok := rc.mutation.Title(); !ok {
-		return &ValidationError{Name: "title", err: errors.New(`ent: missing required field "title"`)}
-	}
-	if _, ok := rc.mutation.Icon(); !ok {
-		return &ValidationError{Name: "icon", err: errors.New(`ent: missing required field "icon"`)}
-	}
-	if _, ok := rc.mutation.Tag(); !ok {
-		return &ValidationError{Name: "tag", err: errors.New(`ent: missing required field "tag"`)}
+	if _, ok := rc.mutation.Name(); !ok {
+		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "name"`)}
 	}
 	if _, ok := rc.mutation.Desc(); !ok {
 		return &ValidationError{Name: "desc", err: errors.New(`ent: missing required field "desc"`)}
 	}
 	if _, ok := rc.mutation.URL(); !ok {
 		return &ValidationError{Name: "url", err: errors.New(`ent: missing required field "url"`)}
-	}
-	if _, ok := rc.mutation.CreatedUserName(); !ok {
-		return &ValidationError{Name: "created_user_name", err: errors.New(`ent: missing required field "created_user_name"`)}
-	}
-	if _, ok := rc.mutation.UpdatedUserName(); !ok {
-		return &ValidationError{Name: "updated_user_name", err: errors.New(`ent: missing required field "updated_user_name"`)}
 	}
 	if _, ok := rc.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "created_at"`)}
@@ -250,13 +244,13 @@ func (rc *ResourcesCreate) createSpec() (*Resources, *sqlgraph.CreateSpec) {
 		_node.ID = id
 		_spec.ID.Value = id
 	}
-	if value, ok := rc.mutation.Title(); ok {
+	if value, ok := rc.mutation.Name(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: resources.FieldTitle,
+			Column: resources.FieldName,
 		})
-		_node.Title = value
+		_node.Name = value
 	}
 	if value, ok := rc.mutation.Icon(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -265,14 +259,6 @@ func (rc *ResourcesCreate) createSpec() (*Resources, *sqlgraph.CreateSpec) {
 			Column: resources.FieldIcon,
 		})
 		_node.Icon = value
-	}
-	if value, ok := rc.mutation.Tag(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: resources.FieldTag,
-		})
-		_node.Tag = value
 	}
 	if value, ok := rc.mutation.Desc(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -290,22 +276,6 @@ func (rc *ResourcesCreate) createSpec() (*Resources, *sqlgraph.CreateSpec) {
 		})
 		_node.URL = value
 	}
-	if value, ok := rc.mutation.CreatedUserName(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: resources.FieldCreatedUserName,
-		})
-		_node.CreatedUserName = value
-	}
-	if value, ok := rc.mutation.UpdatedUserName(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: resources.FieldUpdatedUserName,
-		})
-		_node.UpdatedUserName = value
-	}
 	if value, ok := rc.mutation.CreatedAt(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
@@ -321,6 +291,25 @@ func (rc *ResourcesCreate) createSpec() (*Resources, *sqlgraph.CreateSpec) {
 			Column: resources.FieldUpdatedAt,
 		})
 		_node.UpdatedAt = value
+	}
+	if nodes := rc.mutation.TagIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   resources.TagTable,
+			Columns: resources.TagPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeString,
+					Column: tag.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
 }

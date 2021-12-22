@@ -2,7 +2,7 @@
  * @Author: CuiYao
  * @Date: 2021-12-10 16:31:55
  * @Last Modified by: CuiYao
- * @Last Modified time: 2021-12-10 18:02:25
+ * @Last Modified time: 2021-12-22 15:15:33
  */
 
 package main
@@ -43,13 +43,12 @@ func main() {
 	e.Use(middleware.Logger())
 	// e.Use(middleware.Recover())
 
-	client, err := ent.Open("postgres", os.Getenv("ARMINIP_POSTGRESQL_DSN"))
+	client, err := ent.Open("postgres", os.Getenv("COURSE_PLAN_POSTGRESQL_DSN"))
 	if err != nil {
 		log.Fatal("connect sql failed", err)
 	}
 	defer client.Close()
-	client.Schema.Create(ctx, migrate.WithDropIndex(true))
-	if err != nil {
+	if err = client.Schema.Create(ctx, migrate.WithDropIndex(true)); err != nil {
 		log.Fatalf("failed creating schema resources: %v", err)
 	}
 
@@ -62,7 +61,12 @@ func main() {
 	g.POST("/update", ctrl.UpdateUser)
 	g.POST("/list", ctrl.ListUser)
 	g.POST("/delete", ctrl.DeleteUser)
-
+	r := e.Group("/recs")
+	r.POST("/create", ctrl.CreateResources)
+	r.POST("/update", ctrl.UpdateResources)
+	r.POST("/list", ctrl.ListResources)
+	r.POST("/get", ctrl.GetResources)
+	r.POST("/del", ctrl.DeleteResources)
 	e.Logger.Fatal(e.Start(":8082"))
 
 }

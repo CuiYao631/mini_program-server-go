@@ -16,24 +16,39 @@ type Resources struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID string `json:"id,omitempty"`
-	// Title holds the value of the "title" field.
-	Title string `json:"title,omitempty"`
+	// Name holds the value of the "name" field.
+	Name string `json:"name,omitempty"`
 	// Icon holds the value of the "icon" field.
 	Icon string `json:"icon,omitempty"`
-	// Tag holds the value of the "tag" field.
-	Tag string `json:"tag,omitempty"`
 	// Desc holds the value of the "desc" field.
 	Desc string `json:"desc,omitempty"`
 	// URL holds the value of the "url" field.
 	URL string `json:"url,omitempty"`
-	// CreatedUserName holds the value of the "created_user_name" field.
-	CreatedUserName string `json:"created_user_name,omitempty"`
-	// UpdatedUserName holds the value of the "updated_user_name" field.
-	UpdatedUserName string `json:"updated_user_name,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// Edges holds the relations/edges for other nodes in the graph.
+	// The values are being populated by the ResourcesQuery when eager-loading is set.
+	Edges ResourcesEdges `json:"edges"`
+}
+
+// ResourcesEdges holds the relations/edges for other nodes in the graph.
+type ResourcesEdges struct {
+	// Tag holds the value of the tag edge.
+	Tag []*Tag `json:"tag,omitempty"`
+	// loadedTypes holds the information for reporting if a
+	// type was loaded (or requested) in eager-loading or not.
+	loadedTypes [1]bool
+}
+
+// TagOrErr returns the Tag value or an error if the edge
+// was not loaded in eager-loading.
+func (e ResourcesEdges) TagOrErr() ([]*Tag, error) {
+	if e.loadedTypes[0] {
+		return e.Tag, nil
+	}
+	return nil, &NotLoadedError{edge: "tag"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -41,7 +56,7 @@ func (*Resources) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case resources.FieldID, resources.FieldTitle, resources.FieldIcon, resources.FieldTag, resources.FieldDesc, resources.FieldURL, resources.FieldCreatedUserName, resources.FieldUpdatedUserName:
+		case resources.FieldID, resources.FieldName, resources.FieldIcon, resources.FieldDesc, resources.FieldURL:
 			values[i] = new(sql.NullString)
 		case resources.FieldCreatedAt, resources.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -66,23 +81,17 @@ func (r *Resources) assignValues(columns []string, values []interface{}) error {
 			} else if value.Valid {
 				r.ID = value.String
 			}
-		case resources.FieldTitle:
+		case resources.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field title", values[i])
+				return fmt.Errorf("unexpected type %T for field name", values[i])
 			} else if value.Valid {
-				r.Title = value.String
+				r.Name = value.String
 			}
 		case resources.FieldIcon:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field icon", values[i])
 			} else if value.Valid {
 				r.Icon = value.String
-			}
-		case resources.FieldTag:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field tag", values[i])
-			} else if value.Valid {
-				r.Tag = value.String
 			}
 		case resources.FieldDesc:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -95,18 +104,6 @@ func (r *Resources) assignValues(columns []string, values []interface{}) error {
 				return fmt.Errorf("unexpected type %T for field url", values[i])
 			} else if value.Valid {
 				r.URL = value.String
-			}
-		case resources.FieldCreatedUserName:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field created_user_name", values[i])
-			} else if value.Valid {
-				r.CreatedUserName = value.String
-			}
-		case resources.FieldUpdatedUserName:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field updated_user_name", values[i])
-			} else if value.Valid {
-				r.UpdatedUserName = value.String
 			}
 		case resources.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -123,6 +120,11 @@ func (r *Resources) assignValues(columns []string, values []interface{}) error {
 		}
 	}
 	return nil
+}
+
+// QueryTag queries the "tag" edge of the Resources entity.
+func (r *Resources) QueryTag() *TagQuery {
+	return (&ResourcesClient{config: r.config}).QueryTag(r)
 }
 
 // Update returns a builder for updating this Resources.
@@ -148,20 +150,14 @@ func (r *Resources) String() string {
 	var builder strings.Builder
 	builder.WriteString("Resources(")
 	builder.WriteString(fmt.Sprintf("id=%v", r.ID))
-	builder.WriteString(", title=")
-	builder.WriteString(r.Title)
+	builder.WriteString(", name=")
+	builder.WriteString(r.Name)
 	builder.WriteString(", icon=")
 	builder.WriteString(r.Icon)
-	builder.WriteString(", tag=")
-	builder.WriteString(r.Tag)
 	builder.WriteString(", desc=")
 	builder.WriteString(r.Desc)
 	builder.WriteString(", url=")
 	builder.WriteString(r.URL)
-	builder.WriteString(", created_user_name=")
-	builder.WriteString(r.CreatedUserName)
-	builder.WriteString(", updated_user_name=")
-	builder.WriteString(r.UpdatedUserName)
 	builder.WriteString(", created_at=")
 	builder.WriteString(r.CreatedAt.Format(time.ANSIC))
 	builder.WriteString(", updated_at=")
