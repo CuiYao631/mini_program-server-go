@@ -11,10 +11,6 @@ COPY script/wait-for-postgres.sh /wait-for-postgres.sh
 
 RUN chmod +x wait-for-postgres.sh
 
-EXPOSE 9192
-
-EXPOSE 8080
-
 COPY release/main /
 
 CMD ["/main"]

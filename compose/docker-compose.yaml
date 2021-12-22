@@ -1,0 +1,25 @@
+services:
+
+  db:
+    image: postgres:13
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: postgres
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --locale=C"
+    volumes:
+      - postgres-vol:/var/lib/postgresql/data/
+    command: postgres -c listen_addresses="*"
+
+  Mini_program-server-go:
+    image: registry.cn-hangzhou.aliyuncs.com/xiaocui_server/mini_program-server-go:dev
+    depends_on:
+      - db
+    ports:
+      - "8082:8082"
+    environment:
+      URSE_PLAN_POSTGRESQL_DSN: host=db user=admin password=password dbname=postgres port=5432 sslmode=disable
+volumes:
+    postgres-vol: 
