@@ -24,6 +24,7 @@ func (Resources) Fields() []ent.Field {
 		field.String("name"),                       //名称
 		field.String("icon").Optional(),            //图标
 		field.String("desc"),                       //描述
+		field.String("explain"),                    //说明
 		field.String("url"),                        //url
 		field.Time("created_at").Default(time.Now), //创建时间
 		field.Time("updated_at").Default(time.Now).UpdateDefault(time.Now), //更新时间

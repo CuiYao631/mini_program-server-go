@@ -114,6 +114,13 @@ func Desc(v string) predicate.Resources {
 	})
 }
 
+// Explain applies equality check predicate on the "explain" field. It's identical to ExplainEQ.
+func Explain(v string) predicate.Resources {
+	return predicate.Resources(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldExplain), v))
+	})
+}
+
 // URL applies equality check predicate on the "url" field. It's identical to URLEQ.
 func URL(v string) predicate.Resources {
 	return predicate.Resources(func(s *sql.Selector) {
@@ -479,6 +486,117 @@ func DescEqualFold(v string) predicate.Resources {
 func DescContainsFold(v string) predicate.Resources {
 	return predicate.Resources(func(s *sql.Selector) {
 		s.Where(sql.ContainsFold(s.C(FieldDesc), v))
+	})
+}
+
+// ExplainEQ applies the EQ predicate on the "explain" field.
+func ExplainEQ(v string) predicate.Resources {
+	return predicate.Resources(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldExplain), v))
+	})
+}
+
+// ExplainNEQ applies the NEQ predicate on the "explain" field.
+func ExplainNEQ(v string) predicate.Resources {
+	return predicate.Resources(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldExplain), v))
+	})
+}
+
+// ExplainIn applies the In predicate on the "explain" field.
+func ExplainIn(vs ...string) predicate.Resources {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Resources(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldExplain), v...))
+	})
+}
+
+// ExplainNotIn applies the NotIn predicate on the "explain" field.
+func ExplainNotIn(vs ...string) predicate.Resources {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Resources(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldExplain), v...))
+	})
+}
+
+// ExplainGT applies the GT predicate on the "explain" field.
+func ExplainGT(v string) predicate.Resources {
+	return predicate.Resources(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldExplain), v))
+	})
+}
+
+// ExplainGTE applies the GTE predicate on the "explain" field.
+func ExplainGTE(v string) predicate.Resources {
+	return predicate.Resources(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldExplain), v))
+	})
+}
+
+// ExplainLT applies the LT predicate on the "explain" field.
+func ExplainLT(v string) predicate.Resources {
+	return predicate.Resources(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldExplain), v))
+	})
+}
+
+// ExplainLTE applies the LTE predicate on the "explain" field.
+func ExplainLTE(v string) predicate.Resources {
+	return predicate.Resources(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldExplain), v))
+	})
+}
+
+// ExplainContains applies the Contains predicate on the "explain" field.
+func ExplainContains(v string) predicate.Resources {
+	return predicate.Resources(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldExplain), v))
+	})
+}
+
+// ExplainHasPrefix applies the HasPrefix predicate on the "explain" field.
+func ExplainHasPrefix(v string) predicate.Resources {
+	return predicate.Resources(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldExplain), v))
+	})
+}
+
+// ExplainHasSuffix applies the HasSuffix predicate on the "explain" field.
+func ExplainHasSuffix(v string) predicate.Resources {
+	return predicate.Resources(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldExplain), v))
+	})
+}
+
+// ExplainEqualFold applies the EqualFold predicate on the "explain" field.
+func ExplainEqualFold(v string) predicate.Resources {
+	return predicate.Resources(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldExplain), v))
+	})
+}
+
+// ExplainContainsFold applies the ContainsFold predicate on the "explain" field.
+func ExplainContainsFold(v string) predicate.Resources {
+	return predicate.Resources(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldExplain), v))
 	})
 }
 

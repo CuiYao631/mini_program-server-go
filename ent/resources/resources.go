@@ -17,6 +17,8 @@ const (
 	FieldIcon = "icon"
 	// FieldDesc holds the string denoting the desc field in the database.
 	FieldDesc = "desc"
+	// FieldExplain holds the string denoting the explain field in the database.
+	FieldExplain = "explain"
 	// FieldURL holds the string denoting the url field in the database.
 	FieldURL = "url"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
@@ -40,6 +42,7 @@ var Columns = []string{
 	FieldName,
 	FieldIcon,
 	FieldDesc,
+	FieldExplain,
 	FieldURL,
 	FieldCreatedAt,
 	FieldUpdatedAt,

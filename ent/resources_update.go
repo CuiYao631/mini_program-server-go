@@ -60,6 +60,12 @@ func (ru *ResourcesUpdate) SetDesc(s string) *ResourcesUpdate {
 	return ru
 }
 
+// SetExplain sets the "explain" field.
+func (ru *ResourcesUpdate) SetExplain(s string) *ResourcesUpdate {
+	ru.mutation.SetExplain(s)
+	return ru
+}
+
 // SetURL sets the "url" field.
 func (ru *ResourcesUpdate) SetURL(s string) *ResourcesUpdate {
 	ru.mutation.SetURL(s)
@@ -235,6 +241,13 @@ func (ru *ResourcesUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: resources.FieldDesc,
 		})
 	}
+	if value, ok := ru.mutation.Explain(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: resources.FieldExplain,
+		})
+	}
 	if value, ok := ru.mutation.URL(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
@@ -358,6 +371,12 @@ func (ruo *ResourcesUpdateOne) ClearIcon() *ResourcesUpdateOne {
 // SetDesc sets the "desc" field.
 func (ruo *ResourcesUpdateOne) SetDesc(s string) *ResourcesUpdateOne {
 	ruo.mutation.SetDesc(s)
+	return ruo
+}
+
+// SetExplain sets the "explain" field.
+func (ruo *ResourcesUpdateOne) SetExplain(s string) *ResourcesUpdateOne {
+	ruo.mutation.SetExplain(s)
 	return ruo
 }
 
@@ -558,6 +577,13 @@ func (ruo *ResourcesUpdateOne) sqlSave(ctx context.Context) (_node *Resources, e
 			Type:   field.TypeString,
 			Value:  value,
 			Column: resources.FieldDesc,
+		})
+	}
+	if value, ok := ruo.mutation.Explain(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: resources.FieldExplain,
 		})
 	}
 	if value, ok := ruo.mutation.URL(); ok {

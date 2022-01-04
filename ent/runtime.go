@@ -18,11 +18,11 @@ func init() {
 	resourcesFields := schema.Resources{}.Fields()
 	_ = resourcesFields
 	// resourcesDescCreatedAt is the schema descriptor for created_at field.
-	resourcesDescCreatedAt := resourcesFields[5].Descriptor()
+	resourcesDescCreatedAt := resourcesFields[6].Descriptor()
 	// resources.DefaultCreatedAt holds the default value on creation for the created_at field.
 	resources.DefaultCreatedAt = resourcesDescCreatedAt.Default.(func() time.Time)
 	// resourcesDescUpdatedAt is the schema descriptor for updated_at field.
-	resourcesDescUpdatedAt := resourcesFields[6].Descriptor()
+	resourcesDescUpdatedAt := resourcesFields[7].Descriptor()
 	// resources.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	resources.DefaultUpdatedAt = resourcesDescUpdatedAt.Default.(func() time.Time)
 	// resources.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.

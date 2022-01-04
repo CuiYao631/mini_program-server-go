@@ -22,6 +22,8 @@ type Resources struct {
 	Icon string `json:"icon,omitempty"`
 	// Desc holds the value of the "desc" field.
 	Desc string `json:"desc,omitempty"`
+	// Explain holds the value of the "explain" field.
+	Explain string `json:"explain,omitempty"`
 	// URL holds the value of the "url" field.
 	URL string `json:"url,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
@@ -56,7 +58,7 @@ func (*Resources) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case resources.FieldID, resources.FieldName, resources.FieldIcon, resources.FieldDesc, resources.FieldURL:
+		case resources.FieldID, resources.FieldName, resources.FieldIcon, resources.FieldDesc, resources.FieldExplain, resources.FieldURL:
 			values[i] = new(sql.NullString)
 		case resources.FieldCreatedAt, resources.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -98,6 +100,12 @@ func (r *Resources) assignValues(columns []string, values []interface{}) error {
 				return fmt.Errorf("unexpected type %T for field desc", values[i])
 			} else if value.Valid {
 				r.Desc = value.String
+			}
+		case resources.FieldExplain:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field explain", values[i])
+			} else if value.Valid {
+				r.Explain = value.String
 			}
 		case resources.FieldURL:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -156,6 +164,8 @@ func (r *Resources) String() string {
 	builder.WriteString(r.Icon)
 	builder.WriteString(", desc=")
 	builder.WriteString(r.Desc)
+	builder.WriteString(", explain=")
+	builder.WriteString(r.Explain)
 	builder.WriteString(", url=")
 	builder.WriteString(r.URL)
 	builder.WriteString(", created_at=")

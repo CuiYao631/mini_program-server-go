@@ -47,6 +47,12 @@ func (rc *ResourcesCreate) SetDesc(s string) *ResourcesCreate {
 	return rc
 }
 
+// SetExplain sets the "explain" field.
+func (rc *ResourcesCreate) SetExplain(s string) *ResourcesCreate {
+	rc.mutation.SetExplain(s)
+	return rc
+}
+
 // SetURL sets the "url" field.
 func (rc *ResourcesCreate) SetURL(s string) *ResourcesCreate {
 	rc.mutation.SetURL(s)
@@ -203,6 +209,9 @@ func (rc *ResourcesCreate) check() error {
 	if _, ok := rc.mutation.Desc(); !ok {
 		return &ValidationError{Name: "desc", err: errors.New(`ent: missing required field "desc"`)}
 	}
+	if _, ok := rc.mutation.Explain(); !ok {
+		return &ValidationError{Name: "explain", err: errors.New(`ent: missing required field "explain"`)}
+	}
 	if _, ok := rc.mutation.URL(); !ok {
 		return &ValidationError{Name: "url", err: errors.New(`ent: missing required field "url"`)}
 	}
@@ -267,6 +276,14 @@ func (rc *ResourcesCreate) createSpec() (*Resources, *sqlgraph.CreateSpec) {
 			Column: resources.FieldDesc,
 		})
 		_node.Desc = value
+	}
+	if value, ok := rc.mutation.Explain(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: resources.FieldExplain,
+		})
+		_node.Explain = value
 	}
 	if value, ok := rc.mutation.URL(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{

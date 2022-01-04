@@ -39,6 +39,7 @@ type ResourcesMutation struct {
 	name          *string
 	icon          *string
 	desc          *string
+	explain       *string
 	url           *string
 	created_at    *time.Time
 	updated_at    *time.Time
@@ -257,6 +258,42 @@ func (m *ResourcesMutation) ResetDesc() {
 	m.desc = nil
 }
 
+// SetExplain sets the "explain" field.
+func (m *ResourcesMutation) SetExplain(s string) {
+	m.explain = &s
+}
+
+// Explain returns the value of the "explain" field in the mutation.
+func (m *ResourcesMutation) Explain() (r string, exists bool) {
+	v := m.explain
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldExplain returns the old "explain" field's value of the Resources entity.
+// If the Resources object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ResourcesMutation) OldExplain(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldExplain is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldExplain requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldExplain: %w", err)
+	}
+	return oldValue.Explain, nil
+}
+
+// ResetExplain resets all changes to the "explain" field.
+func (m *ResourcesMutation) ResetExplain() {
+	m.explain = nil
+}
+
 // SetURL sets the "url" field.
 func (m *ResourcesMutation) SetURL(s string) {
 	m.url = &s
@@ -438,7 +475,7 @@ func (m *ResourcesMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *ResourcesMutation) Fields() []string {
-	fields := make([]string, 0, 6)
+	fields := make([]string, 0, 7)
 	if m.name != nil {
 		fields = append(fields, resources.FieldName)
 	}
@@ -447,6 +484,9 @@ func (m *ResourcesMutation) Fields() []string {
 	}
 	if m.desc != nil {
 		fields = append(fields, resources.FieldDesc)
+	}
+	if m.explain != nil {
+		fields = append(fields, resources.FieldExplain)
 	}
 	if m.url != nil {
 		fields = append(fields, resources.FieldURL)
@@ -471,6 +511,8 @@ func (m *ResourcesMutation) Field(name string) (ent.Value, bool) {
 		return m.Icon()
 	case resources.FieldDesc:
 		return m.Desc()
+	case resources.FieldExplain:
+		return m.Explain()
 	case resources.FieldURL:
 		return m.URL()
 	case resources.FieldCreatedAt:
@@ -492,6 +534,8 @@ func (m *ResourcesMutation) OldField(ctx context.Context, name string) (ent.Valu
 		return m.OldIcon(ctx)
 	case resources.FieldDesc:
 		return m.OldDesc(ctx)
+	case resources.FieldExplain:
+		return m.OldExplain(ctx)
 	case resources.FieldURL:
 		return m.OldURL(ctx)
 	case resources.FieldCreatedAt:
@@ -527,6 +571,13 @@ func (m *ResourcesMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetDesc(v)
+		return nil
+	case resources.FieldExplain:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetExplain(v)
 		return nil
 	case resources.FieldURL:
 		v, ok := value.(string)
@@ -615,6 +666,9 @@ func (m *ResourcesMutation) ResetField(name string) error {
 		return nil
 	case resources.FieldDesc:
 		m.ResetDesc()
+		return nil
+	case resources.FieldExplain:
+		m.ResetExplain()
 		return nil
 	case resources.FieldURL:
 		m.ResetURL()

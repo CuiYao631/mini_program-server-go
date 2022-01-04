@@ -7,7 +7,12 @@
 
 package controller
 
-import "github.com/CuiYao631/mini_program-server-go/usecase"
+import (
+	"net/http"
+
+	"github.com/CuiYao631/mini_program-server-go/usecase"
+	"github.com/labstack/echo/v4"
+)
 
 type Controller interface {
 	Resources
@@ -18,4 +23,8 @@ type controller struct {
 
 func MakeController(uc usecase.Usecase) *controller {
 	return &controller{uc: uc}
+}
+func (ctrl *controller) Root(c echo.Context) error {
+
+	return echo.NewHTTPError(http.StatusOK)
 }

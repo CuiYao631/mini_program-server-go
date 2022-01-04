@@ -20,6 +20,6 @@ services:
     ports:
       - "8082:8082"
     environment:
-      URSE_PLAN_POSTGRESQL_DSN: host=db user=admin password=password dbname=postgres port=5432 sslmode=disable
+      COURSE_PLAN_POSTGRESQL_DSN: host=db user=admin password=password dbname=postgres port=5432 sslmode=disable
 volumes:
     postgres-vol: 

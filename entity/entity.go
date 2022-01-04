@@ -15,12 +15,23 @@ type User struct {
 	Password string   `json:"password"`
 	UserType UserType `json:"userType"`
 }
+
+//轮播图
+
+type RotationImage struct {
+	ID          string `json:"id"`
+	Url         string `json:"url"`
+	ResourcesID string `json:"resourcesId"`
+}
+
+//工具资源
 type Resources struct {
 	ID       string    `json:"id"`
 	Icon     string    `json:"icon"`
 	Name     string    `json:"name"`
 	Tag      string    `json:"tag"`
 	Desc     string    `json:"desc"`
+	Explain  string    `json:"explain"`
 	Url      string    `json:"url"`
 	CreateAt time.Time `json:"createAt"`
 	UpdateAt time.Time `json:"updateAt"`

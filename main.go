@@ -55,7 +55,7 @@ func main() {
 	response := repository.MakeRepository(client)
 	pro := usecase.MakeUsecase(response)
 	ctrl := controller.MakeController(pro)
-
+	e.GET("/", ctrl.Root)
 	g := e.Group("/user")
 	g.POST("/add", ctrl.CreateUser)
 	g.POST("/update", ctrl.UpdateUser)
