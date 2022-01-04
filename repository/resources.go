@@ -23,6 +23,7 @@ func (repo *repository) CreateResources(ctx context.Context, resources entity.Re
 		SetName(resources.Name).
 		SetIcon(resources.Icon).
 		SetDesc(resources.Desc).
+		SetExplain(resources.Explain).
 		SetURL(resources.Url).
 		//SetTagID(resources.Tag).
 		Save(ctx)
@@ -37,6 +38,7 @@ func (repo *repository) UpdateResources(ctx context.Context, res entity.Resource
 		SetName(res.Name).
 		SetIcon(res.Icon).
 		SetDesc(res.Desc).
+		SetExplain(res.Explain).
 		SetURL(res.Url).
 		//SetTagID(res.Tag).
 		Where(resources.IDEQ(res.ID)).
