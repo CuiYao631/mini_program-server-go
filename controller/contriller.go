@@ -10,6 +10,7 @@ package controller
 import (
 	"net/http"
 
+	"github.com/CuiYao631/mini_program-server-go/entity"
 	"github.com/CuiYao631/mini_program-server-go/usecase"
 	"github.com/labstack/echo/v4"
 )
@@ -26,5 +27,30 @@ func MakeController(uc usecase.Usecase) *controller {
 }
 func (ctrl *controller) Root(c echo.Context) error {
 
-	return echo.NewHTTPError(http.StatusOK)
+	return echo.NewHTTPError(http.StatusOK, "Welcome to the xcui_Toolbox")
+}
+func (ctrl *controller) Home(c echo.Context) error {
+	resources, err := ctrl.uc.ListResources(c.Request().Context())
+	if err != nil {
+		return echo.NewHTTPError(http.StatusOK)
+	}
+	var images []entity.RotationImage
+	for _, v := range resources {
+		image := entity.RotationImage{
+			Url:         v.Icon,
+			ResourcesID: v.ID,
+		}
+		images = append(images, image)
+
+	}
+	// for _, v := range resources {
+	// 	if v.Topping {
+	// 		image := entity.RotationImage{
+	// 			Url:         v.Icon,
+	// 			ResourcesID: v.ID,
+	// 		}
+	// 		images = append(images, image)
+	// 	}
+	// }
+	return echo.NewHTTPError(http.StatusOK, images)
 }
