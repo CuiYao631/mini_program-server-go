@@ -33,6 +33,7 @@ type Resources struct {
 	Desc     string    `json:"desc"`
 	Explain  string    `json:"explain"`
 	Url      string    `json:"url"`
+	Topping  bool      `json:"topping"`
 	CreateAt time.Time `json:"createAt"`
 	UpdateAt time.Time `json:"updateAt"`
 }

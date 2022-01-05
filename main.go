@@ -56,6 +56,7 @@ func main() {
 	pro := usecase.MakeUsecase(response)
 	ctrl := controller.MakeController(pro)
 	e.GET("/", ctrl.Root)
+	e.POST("home", ctrl.Home)
 	g := e.Group("/user")
 	g.POST("/add", ctrl.CreateUser)
 	g.POST("/update", ctrl.UpdateUser)
