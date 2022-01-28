@@ -2,7 +2,7 @@
  * @Author: CuiYao
  * @Date: 2021-12-10 16:31:55
  * @Last Modified by: CuiYao
- * @Last Modified time: 2021-12-22 16:15:08
+ * @Last Modified time: 2022-01-28 10:25:47
  */
 
 package main
@@ -21,6 +21,8 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	_ "github.com/lib/pq"
+	"github.com/minio/minio-go/v7"
+	"github.com/minio/minio-go/v7/pkg/credentials"
 )
 
 const Intervaltime = 20 * time.Minute
@@ -41,8 +43,8 @@ func main() {
 	ctx := context.Background()
 	e := echo.New()
 	e.Use(middleware.Logger())
-	// e.Use(middleware.Recover())
 
+	//sql
 	client, err := ent.Open("postgres", os.Getenv("COURSE_PLAN_POSTGRESQL_DSN"))
 	if err != nil {
 		log.Fatal("connect sql failed", err)
@@ -51,10 +53,22 @@ func main() {
 	if err = client.Schema.Create(ctx, migrate.WithDropIndex(true)); err != nil {
 		log.Fatalf("failed creating schema resources: %v", err)
 	}
+	//redis
+
+	//minio
+	minioClient, err := minio.New(os.Getenv("ENDPOINT"), &minio.Options{
+		Creds:  credentials.NewStaticV4(os.Getenv("ACCESSKEYID"), os.Getenv("ACCESSKEY"), ""),
+		Secure: true,
+	})
+	if err != nil {
+		log.Fatalf("minio failed: %v", err)
+	}
 
 	response := repository.MakeRepository(client)
-	pro := usecase.MakeUsecase(response)
+	pro := usecase.MakeUsecase(response, minioClient)
 	ctrl := controller.MakeController(pro)
+
+	//route
 	e.GET("/", ctrl.Root)
 	e.POST("home", ctrl.Home)
 	g := e.Group("/user")
@@ -68,6 +82,9 @@ func main() {
 	r.POST("/list", ctrl.ListResources)
 	r.POST("/get", ctrl.GetResources)
 	r.POST("/del", ctrl.DeleteResources)
-	e.Logger.Fatal(e.Start(":8082"))
 
+	m := e.Group("/minio")
+	ctrl.MinioRoute(m)
+
+	e.Logger.Fatal(e.Start(":8082"))
 }
