@@ -8,7 +8,7 @@ import (
 
 type Wallpaper interface {
 	UploadWallpaper(c echo.Context) error
-	listWallpaper(c echo.Context) error
+	ListWallpaper(c echo.Context) error
 	GetWallpaper(c echo.Context) error
 	DeleteWallpaper(c echo.Context) error
 }
@@ -28,9 +28,12 @@ func (ctrl *controller) UploadWallpaper(c echo.Context) error {
 	return echo.NewHTTPError(http.StatusOK)
 }
 
-func (ctrl *controller) listWallpaper(c echo.Context) error {
-
-	return echo.NewHTTPError(http.StatusOK)
+func (ctrl *controller) ListWallpaper(c echo.Context) error {
+	wallpaper, err := ctrl.uc.ListWallpaper(c.Request().Context())
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err)
+	}
+	return echo.NewHTTPError(http.StatusOK, wallpaper)
 }
 
 func (ctrl *controller) GetWallpaper(c echo.Context) error {

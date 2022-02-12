@@ -13,13 +13,13 @@ services:
       - postgres-vol:/var/lib/postgresql/data/
     command: postgres -c listen_addresses="*"
 
-  Mini_program-server-go:
-    image: registry.cn-hangzhou.aliyuncs.com/xiaocui_server/mini_program-server-go:dev
-    depends_on:
-      - db
-    ports:
-      - "8082:8082"
-    environment:
-      COURSE_PLAN_POSTGRESQL_DSN: host=db user=admin password=password dbname=postgres port=5432 sslmode=disable
+  # Mini_program-server-go:
+  #   image: registry.cn-hangzhou.aliyuncs.com/xiaocui_server/mini_program-server-go:dev
+  #   depends_on:
+  #     - db
+  #   ports:
+  #     - "8082:8082"
+  #   environment:
+  #     COURSE_PLAN_POSTGRESQL_DSN: host=db user=admin password=password dbname=postgres port=5432 sslmode=disable
 volumes:
     postgres-vol: 

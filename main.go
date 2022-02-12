@@ -85,7 +85,7 @@ func main() {
 
 	w := e.Group("/wallpaper")
 	w.POST("/upload", ctrl.UploadWallpaper)
-	w.POST("/list", ctrl.ListObject)
+	w.POST("/list", ctrl.ListWallpaper)
 	m := e.Group("/minio")
 	ctrl.MinioRoute(m)
 

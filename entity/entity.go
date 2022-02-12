@@ -8,7 +8,6 @@
 package entity
 
 import (
-	"os"
 	"time"
 )
 
@@ -41,8 +40,6 @@ type Resources struct {
 	UpdateAt time.Time `json:"updateAt"`
 }
 
-type UploadFile struct {
-	BucketName string   `json:"bucketName"`
-	ObjectName string   `json:"objectName"`
-	File       *os.File `json:"file"`
+type Wallpaper struct {
+	Links []string `json:"links"`
 }
