@@ -16,7 +16,10 @@ import (
 )
 
 type Controller interface {
+	//资源
 	Resources
+	//壁纸
+	Wallpaper
 }
 type controller struct {
 	uc usecase.Usecase
@@ -43,6 +46,8 @@ func (ctrl *controller) Home(c echo.Context) error {
 		images = append(images, image)
 
 	}
+
+	//TODO 这段代码啥作用，忘了
 	// for _, v := range resources {
 	// 	if v.Topping {
 	// 		image := entity.RotationImage{

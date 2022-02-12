@@ -83,6 +83,9 @@ func main() {
 	r.POST("/get", ctrl.GetResources)
 	r.POST("/del", ctrl.DeleteResources)
 
+	w := e.Group("/wallpaper")
+	w.POST("/upload", ctrl.UploadWallpaper)
+	w.POST("/list", ctrl.ListObject)
 	m := e.Group("/minio")
 	ctrl.MinioRoute(m)
 

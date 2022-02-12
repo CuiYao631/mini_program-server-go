@@ -7,7 +7,10 @@
 
 package entity
 
-import "time"
+import (
+	"os"
+	"time"
+)
 
 type User struct {
 	ID       string   `json:"id"`
@@ -36,4 +39,10 @@ type Resources struct {
 	Topping  bool      `json:"topping"`
 	CreateAt time.Time `json:"createAt"`
 	UpdateAt time.Time `json:"updateAt"`
+}
+
+type UploadFile struct {
+	BucketName string   `json:"bucketName"`
+	ObjectName string   `json:"objectName"`
+	File       *os.File `json:"file"`
 }

@@ -14,6 +14,7 @@ import (
 type Usecase interface {
 	Resources
 	Minio
+	Wallpaper
 }
 type usecase struct {
 	repo        repository.Repository
