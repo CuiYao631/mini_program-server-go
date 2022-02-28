@@ -11,27 +11,26 @@ import (
 )
 
 type Wallpaper interface {
-	UploadWallpaper(ctx context.Context, bucketName string, file *multipart.FileHeader) error
+	UploadWallpaper(ctx context.Context, bucketName string, file *multipart.FileHeader) (string, string, error)
 	ListWallpaper(ctx context.Context) (entity.Wallpaper, error)
-	GetWallpaper(ctx context.Context, id string) error
+	GetWallpaper(ctx context.Context, bucketName, fileName string) (string, error)
 	DeleteWallpaper(ctx context.Context, id string) error
 }
 
-func (uc *usecase) UploadWallpaper(ctx context.Context, bucketName string, file *multipart.FileHeader) error {
+func (uc *usecase) UploadWallpaper(ctx context.Context, bucketName string, file *multipart.FileHeader) (string, string, error) {
 
 	src, err := file.Open()
 	if err != nil {
-		return err
+		return "", "", err
 	}
 	defer src.Close()
 	uploadInfo, err := uc.minioClient.PutObject(ctx, bucketName, file.Filename, src, file.Size, minio.PutObjectOptions{ContentType: "image/jpeg"})
 	if err != nil {
 		log.Println(err)
-		return err
+		return "", "", err
 	}
 	log.Println(uploadInfo)
-
-	return nil
+	return uploadInfo.Bucket, uploadInfo.Key, nil
 }
 
 func (uc *usecase) ListWallpaper(ctx context.Context) (entity.Wallpaper, error) {
@@ -58,8 +57,8 @@ func (uc *usecase) ListWallpaper(ctx context.Context) (entity.Wallpaper, error) 
 	return wallpaper, nil
 }
 
-func (uc *usecase) GetWallpaper(ctx context.Context, id string) error {
-	panic("not implemented") // TODO: Implement
+func (uc *usecase) GetWallpaper(ctx context.Context, bucketName, fileName string) (string, error) {
+	return "https://tencent.xcuitech.com:1688/" + bucketName + "/" + fileName, nil
 }
 
 func (uc *usecase) DeleteWallpaper(ctx context.Context, id string) error {

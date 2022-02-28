@@ -13,6 +13,10 @@ type Wallpaper interface {
 	DeleteWallpaper(c echo.Context) error
 }
 
+func (ctrl *controller) WallpaperRoute(g *echo.Group) {
+	g.POST("/upload", ctrl.UploadWallpaper)
+	g.POST("/list", ctrl.ListWallpaper)
+}
 func (ctrl *controller) UploadWallpaper(c echo.Context) error {
 	bucketName := c.FormValue("bucketName")
 	// Source
@@ -21,7 +25,7 @@ func (ctrl *controller) UploadWallpaper(c echo.Context) error {
 		return err
 	}
 
-	err = ctrl.uc.UploadWallpaper(c.Request().Context(), bucketName, file)
+	_, _, err = ctrl.uc.UploadWallpaper(c.Request().Context(), bucketName, file)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err)
 	}
@@ -37,7 +41,13 @@ func (ctrl *controller) ListWallpaper(c echo.Context) error {
 }
 
 func (ctrl *controller) GetWallpaper(c echo.Context) error {
-	panic("not implemented") // TODO: Implement
+	bucketName := c.FormValue("bucketName")
+	fileName := c.FormValue("fileName")
+	url, err := ctrl.uc.GetWallpaper(c.Request().Context(), bucketName, fileName)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err)
+	}
+	return echo.NewHTTPError(http.StatusOK, url)
 }
 
 func (ctrl *controller) DeleteWallpaper(c echo.Context) error {

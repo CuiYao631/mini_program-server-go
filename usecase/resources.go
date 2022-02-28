@@ -9,11 +9,13 @@ package usecase
 
 import (
 	"context"
+	"mime/multipart"
 
 	"github.com/CuiYao631/mini_program-server-go/entity"
 )
 
 type Resources interface {
+	UploadResourcesIcon(ctx context.Context, bucketName string, file *multipart.FileHeader) (string, error)
 	CreateResources(ctx context.Context, resources entity.Resources) error
 	UpdateResources(ctx context.Context, resources entity.Resources) error
 	ListResources(ctx context.Context) ([]entity.Resources, error)
@@ -21,9 +23,18 @@ type Resources interface {
 	DeleteResources(ctx context.Context, id string) error
 }
 
+func (uc *usecase) UploadResourcesIcon(ctx context.Context, bucketName string, file *multipart.FileHeader) (string, error) {
+	bucket, fileName, err := uc.UploadWallpaper(ctx, bucketName, file)
+	if err != nil {
+		return "", err
+	}
+	url, err := uc.GetWallpaper(ctx, bucket, fileName)
+
+	return url, nil
+}
+
 func (uc *usecase) CreateResources(ctx context.Context, resources entity.Resources) error {
 	return uc.repo.CreateResources(ctx, resources)
-
 }
 
 func (uc *usecase) UpdateResources(ctx context.Context, resources entity.Resources) error {

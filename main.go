@@ -71,21 +71,17 @@ func main() {
 	//route
 	e.GET("/", ctrl.Root)
 	e.POST("home", ctrl.Home)
-	g := e.Group("/user")
-	g.POST("/add", ctrl.CreateUser)
-	g.POST("/update", ctrl.UpdateUser)
-	g.POST("/list", ctrl.ListUser)
-	g.POST("/delete", ctrl.DeleteUser)
-	r := e.Group("/recs")
-	r.POST("/create", ctrl.CreateResources)
-	r.POST("/update", ctrl.UpdateResources)
-	r.POST("/list", ctrl.ListResources)
-	r.POST("/get", ctrl.GetResources)
-	r.POST("/del", ctrl.DeleteResources)
 
+	//user
+	g := e.Group("/user")
+	ctrl.UserRoute(g)
+	//resources
+	r := e.Group("/recs")
+	ctrl.ResourcesRoute(r)
+	//wallpaper
 	w := e.Group("/wallpaper")
-	w.POST("/upload", ctrl.UploadWallpaper)
-	w.POST("/list", ctrl.ListWallpaper)
+	ctrl.WallpaperRoute(w)
+	//minio
 	m := e.Group("/minio")
 	ctrl.MinioRoute(m)
 

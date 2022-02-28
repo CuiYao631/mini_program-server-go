@@ -14,13 +14,42 @@ import (
 )
 
 type Resources interface {
+	//上传
+	UploadResourcesIcon(c echo.Context) error
+	//创建新的资源
 	CreateResources(c echo.Context) error
+	//更新资源
 	UpdateResources(c echo.Context) error
+	//资源列表
 	ListResources(c echo.Context) error
+	//获取资源
 	GetResources(c echo.Context) error
+	//删除资源
 	DeleteResources(c echo.Context) error
 }
 
+func (ctrl *controller) ResourcesRoute(g *echo.Group) {
+	g.POST("/uploadicon", ctrl.UploadResourcesIcon)
+	g.POST("/create", ctrl.CreateResources)
+	g.POST("/update", ctrl.UpdateResources)
+	g.POST("/list", ctrl.ListResources)
+	g.POST("/get", ctrl.GetResources)
+	g.POST("/del", ctrl.DeleteResources)
+}
+func (ctrl *controller) UploadResourcesIcon(c echo.Context) error {
+	bucketName := c.FormValue("bucketName")
+	// Source
+	file, err := c.FormFile("file")
+	if err != nil {
+		return err
+	}
+
+	url, err := ctrl.uc.UploadResourcesIcon(c.Request().Context(), bucketName, file)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err)
+	}
+	return echo.NewHTTPError(http.StatusOK, url)
+}
 func (ctrl *controller) CreateResources(c echo.Context) error {
 	recs := &entity.Resources{}
 	if err := c.Bind(recs); err != nil {
