@@ -25,6 +25,7 @@ func (repo *repository) CreateResources(ctx context.Context, resources entity.Re
 		SetDesc(resources.Desc).
 		SetExplain(resources.Explain).
 		SetURL(resources.Url).
+		SetIsTop(resources.Topping).
 		//SetTagID(resources.Tag).
 		Save(ctx)
 	if err != nil {

@@ -7,10 +7,10 @@
 package controller
 
 import (
-	"net/http"
-
 	"github.com/CuiYao631/mini_program-server-go/entity"
 	"github.com/labstack/echo/v4"
+	"net/http"
+	"os"
 )
 
 type Resources interface {
@@ -29,16 +29,17 @@ type Resources interface {
 }
 
 func (ctrl *controller) ResourcesRoute(g *echo.Group) {
-	g.POST("/uploadicon", ctrl.UploadResourcesIcon)
 	g.POST("/create", ctrl.CreateResources)
 	g.POST("/update", ctrl.UpdateResources)
 	g.POST("/list", ctrl.ListResources)
 	g.POST("/get", ctrl.GetResources)
 	g.POST("/del", ctrl.DeleteResources)
 }
-func (ctrl *controller) UploadResourcesIcon(c echo.Context) error {
-	bucketName := c.FormValue("bucketName")
-	// Source
+
+func (ctrl *controller) CreateResources(c echo.Context) error {
+
+	bucketName := os.Getenv("RESOURCES_PHOTO_PATH")
+
 	file, err := c.FormFile("file")
 	if err != nil {
 		return err
@@ -48,14 +49,25 @@ func (ctrl *controller) UploadResourcesIcon(c echo.Context) error {
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err)
 	}
-	return echo.NewHTTPError(http.StatusOK, url)
-}
-func (ctrl *controller) CreateResources(c echo.Context) error {
-	recs := &entity.Resources{}
-	if err := c.Bind(recs); err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	isTop := false
+	name := c.FormValue("name")
+	tag := c.FormValue("tag")
+	desc := c.FormValue("desc")
+	explain := c.FormValue("explain")
+	topping := c.FormValue("topping")
+	if topping == "true" {
+		isTop = true
 	}
-	err := ctrl.uc.CreateResources(c.Request().Context(), *recs)
+	recs := &entity.Resources{
+		Icon:    url,
+		Name:    name,
+		Tag:     tag,
+		Desc:    desc,
+		Explain: explain,
+		Url:     "",
+		Topping: isTop,
+	}
+	err = ctrl.uc.CreateResources(c.Request().Context(), *recs)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err)
 	}

@@ -128,6 +128,13 @@ func URL(v string) predicate.Resources {
 	})
 }
 
+// IsTop applies equality check predicate on the "is_top" field. It's identical to IsTopEQ.
+func IsTop(v bool) predicate.Resources {
+	return predicate.Resources(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldIsTop), v))
+	})
+}
+
 // CreatedAt applies equality check predicate on the "created_at" field. It's identical to CreatedAtEQ.
 func CreatedAt(v time.Time) predicate.Resources {
 	return predicate.Resources(func(s *sql.Selector) {
@@ -708,6 +715,20 @@ func URLEqualFold(v string) predicate.Resources {
 func URLContainsFold(v string) predicate.Resources {
 	return predicate.Resources(func(s *sql.Selector) {
 		s.Where(sql.ContainsFold(s.C(FieldURL), v))
+	})
+}
+
+// IsTopEQ applies the EQ predicate on the "is_top" field.
+func IsTopEQ(v bool) predicate.Resources {
+	return predicate.Resources(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldIsTop), v))
+	})
+}
+
+// IsTopNEQ applies the NEQ predicate on the "is_top" field.
+func IsTopNEQ(v bool) predicate.Resources {
+	return predicate.Resources(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldIsTop), v))
 	})
 }
 

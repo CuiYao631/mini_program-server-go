@@ -16,6 +16,7 @@ var (
 		{Name: "desc", Type: field.TypeString},
 		{Name: "explain", Type: field.TypeString},
 		{Name: "url", Type: field.TypeString},
+		{Name: "is_top", Type: field.TypeBool},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
 	}

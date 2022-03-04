@@ -59,6 +59,12 @@ func (rc *ResourcesCreate) SetURL(s string) *ResourcesCreate {
 	return rc
 }
 
+// SetIsTop sets the "is_top" field.
+func (rc *ResourcesCreate) SetIsTop(b bool) *ResourcesCreate {
+	rc.mutation.SetIsTop(b)
+	return rc
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (rc *ResourcesCreate) SetCreatedAt(t time.Time) *ResourcesCreate {
 	rc.mutation.SetCreatedAt(t)
@@ -215,6 +221,9 @@ func (rc *ResourcesCreate) check() error {
 	if _, ok := rc.mutation.URL(); !ok {
 		return &ValidationError{Name: "url", err: errors.New(`ent: missing required field "url"`)}
 	}
+	if _, ok := rc.mutation.IsTop(); !ok {
+		return &ValidationError{Name: "is_top", err: errors.New(`ent: missing required field "is_top"`)}
+	}
 	if _, ok := rc.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "created_at"`)}
 	}
@@ -292,6 +301,14 @@ func (rc *ResourcesCreate) createSpec() (*Resources, *sqlgraph.CreateSpec) {
 			Column: resources.FieldURL,
 		})
 		_node.URL = value
+	}
+	if value, ok := rc.mutation.IsTop(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: resources.FieldIsTop,
+		})
+		_node.IsTop = value
 	}
 	if value, ok := rc.mutation.CreatedAt(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{

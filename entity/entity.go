@@ -33,9 +33,9 @@ type Resources struct {
 	Name     string    `json:"name"`
 	Tag      string    `json:"tag"`
 	Desc     string    `json:"desc"`
-	Explain  string    `json:"explain"`
+	Explain  string    `json:"explain"` //说明
 	Url      string    `json:"url"`
-	Topping  bool      `json:"topping"`
+	Topping  bool      `json:"topping"` //是否置顶
 	CreateAt time.Time `json:"createAt"`
 	UpdateAt time.Time `json:"updateAt"`
 }

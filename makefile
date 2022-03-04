@@ -5,5 +5,8 @@ dev: export ENDPOINT=tencent.xcuitech.com:1688
 dev: export ACCESSKEYID=admin
 dev: export ACCESSKEY=password
 
+dev: export RESOURCES_PHOTO_PATH=res-photo
+dev: export WALLPAPER_PATH=wallpaper
+
 dev:
 	@go run main.go

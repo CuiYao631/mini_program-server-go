@@ -26,6 +26,8 @@ type Resources struct {
 	Explain string `json:"explain,omitempty"`
 	// URL holds the value of the "url" field.
 	URL string `json:"url,omitempty"`
+	// IsTop holds the value of the "is_top" field.
+	IsTop bool `json:"is_top,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
@@ -58,6 +60,8 @@ func (*Resources) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case resources.FieldIsTop:
+			values[i] = new(sql.NullBool)
 		case resources.FieldID, resources.FieldName, resources.FieldIcon, resources.FieldDesc, resources.FieldExplain, resources.FieldURL:
 			values[i] = new(sql.NullString)
 		case resources.FieldCreatedAt, resources.FieldUpdatedAt:
@@ -112,6 +116,12 @@ func (r *Resources) assignValues(columns []string, values []interface{}) error {
 				return fmt.Errorf("unexpected type %T for field url", values[i])
 			} else if value.Valid {
 				r.URL = value.String
+			}
+		case resources.FieldIsTop:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field is_top", values[i])
+			} else if value.Valid {
+				r.IsTop = value.Bool
 			}
 		case resources.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -168,6 +178,8 @@ func (r *Resources) String() string {
 	builder.WriteString(r.Explain)
 	builder.WriteString(", url=")
 	builder.WriteString(r.URL)
+	builder.WriteString(", is_top=")
+	builder.WriteString(fmt.Sprintf("%v", r.IsTop))
 	builder.WriteString(", created_at=")
 	builder.WriteString(r.CreatedAt.Format(time.ANSIC))
 	builder.WriteString(", updated_at=")

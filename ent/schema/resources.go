@@ -26,6 +26,7 @@ func (Resources) Fields() []ent.Field {
 		field.String("desc"),                       //描述
 		field.String("explain"),                    //说明
 		field.String("url"),                        //url
+		field.Bool("is_top"),                       //是否置顶
 		field.Time("created_at").Default(time.Now), //创建时间
 		field.Time("updated_at").Default(time.Now).UpdateDefault(time.Now), //更新时间
 

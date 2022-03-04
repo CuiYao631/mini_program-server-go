@@ -21,6 +21,8 @@ const (
 	FieldExplain = "explain"
 	// FieldURL holds the string denoting the url field in the database.
 	FieldURL = "url"
+	// FieldIsTop holds the string denoting the is_top field in the database.
+	FieldIsTop = "is_top"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
 	FieldCreatedAt = "created_at"
 	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
@@ -44,6 +46,7 @@ var Columns = []string{
 	FieldDesc,
 	FieldExplain,
 	FieldURL,
+	FieldIsTop,
 	FieldCreatedAt,
 	FieldUpdatedAt,
 }

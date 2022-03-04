@@ -72,6 +72,12 @@ func (ru *ResourcesUpdate) SetURL(s string) *ResourcesUpdate {
 	return ru
 }
 
+// SetIsTop sets the "is_top" field.
+func (ru *ResourcesUpdate) SetIsTop(b bool) *ResourcesUpdate {
+	ru.mutation.SetIsTop(b)
+	return ru
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (ru *ResourcesUpdate) SetCreatedAt(t time.Time) *ResourcesUpdate {
 	ru.mutation.SetCreatedAt(t)
@@ -255,6 +261,13 @@ func (ru *ResourcesUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: resources.FieldURL,
 		})
 	}
+	if value, ok := ru.mutation.IsTop(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: resources.FieldIsTop,
+		})
+	}
 	if value, ok := ru.mutation.CreatedAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
@@ -383,6 +396,12 @@ func (ruo *ResourcesUpdateOne) SetExplain(s string) *ResourcesUpdateOne {
 // SetURL sets the "url" field.
 func (ruo *ResourcesUpdateOne) SetURL(s string) *ResourcesUpdateOne {
 	ruo.mutation.SetURL(s)
+	return ruo
+}
+
+// SetIsTop sets the "is_top" field.
+func (ruo *ResourcesUpdateOne) SetIsTop(b bool) *ResourcesUpdateOne {
+	ruo.mutation.SetIsTop(b)
 	return ruo
 }
 
@@ -591,6 +610,13 @@ func (ruo *ResourcesUpdateOne) sqlSave(ctx context.Context) (_node *Resources, e
 			Type:   field.TypeString,
 			Value:  value,
 			Column: resources.FieldURL,
+		})
+	}
+	if value, ok := ruo.mutation.IsTop(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: resources.FieldIsTop,
 		})
 	}
 	if value, ok := ruo.mutation.CreatedAt(); ok {
