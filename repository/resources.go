@@ -64,7 +64,7 @@ func (repo *repository) GetResources(ctx context.Context, id string) (*ent.Resou
 	return res, nil
 }
 func (repo *repository) DeleteResources(ctx context.Context, id string) error {
-	_, err := repo.db.Resources.Delete().Exec(ctx)
+	err := repo.db.Resources.DeleteOneID(id).Exec(ctx)
 	if err != nil {
 		return err
 	}

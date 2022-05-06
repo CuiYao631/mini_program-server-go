@@ -16,9 +16,9 @@ import (
 )
 
 type Controller interface {
-	//资源
+	// Resources 资源
 	Resources
-	//壁纸
+	// Wallpaper 壁纸
 	Wallpaper
 }
 type controller struct {

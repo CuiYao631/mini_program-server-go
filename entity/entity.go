@@ -26,7 +26,7 @@ type RotationImage struct {
 	ResourcesID string `json:"resourcesId"`
 }
 
-//工具资源
+// Resources 工具资源
 type Resources struct {
 	ID       string    `json:"id"`
 	Icon     string    `json:"icon"`

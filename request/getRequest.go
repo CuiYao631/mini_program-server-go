@@ -18,7 +18,7 @@ type GetRequestResponse interface {
 	Errorcode() int
 }
 
-//获取微信公众号AccessToken
+// GetAccessToken 获取微信公众号AccessToken
 func GetAccessToken(client *http.Client, appid, Secret string, resData GetRequestResponse) error {
 	url := "https://api.weixin.qq.com/cgi-bin/token"
 	//将token拼接至url
@@ -27,12 +27,12 @@ func GetAccessToken(client *http.Client, appid, Secret string, resData GetReques
 	resp, err := client.Get(newUrl)
 	if err != nil {
 		log.Println("Get request failed: ", url, err)
-		return errors.New("Request failed")
+		return errors.New("request failed")
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode != 200 {
 		log.Println("Get request failed: ", url, err)
-		return errors.New("Request failed")
+		return errors.New("request failed")
 	}
 	//解析返回数据
 	json.NewDecoder(resp.Body).Decode(resData)
@@ -49,18 +49,18 @@ func appendTokenToUrl(u, Appid, Secret string) string {
 	return parsedUrl.String()
 }
 
-//获取Jsapi_Ticket
-func GetWeiXinJsapi_Ticket(client *http.Client, accessToken string, resData GetRequestResponse) error {
+// GetWeiXinJsapiTicket 获取Jsapi_Ticket
+func GetWeiXinJsapiTicket(client *http.Client, accessToken string, resData GetRequestResponse) error {
 	URL := "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=" + accessToken + "&type=jsapi"
 	resp, err := client.Get(URL)
 	if err != nil {
 		log.Println("Get request failed: ", URL, err)
-		return errors.New("Request failed")
+		return errors.New("request failed")
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode != 200 {
 		log.Println("Get request failed: ", URL, err)
-		return errors.New("Request failed")
+		return errors.New("request failed")
 	}
 	//解析返回数据
 	json.NewDecoder(resp.Body).Decode(resData)
