@@ -1,0 +1,206 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "描述",
+        "title": "标题",
+        "contact": {
+            "name": "联系人",
+            "url": "联系网址",
+            "email": "联系人邮箱"
+        },
+        "license": {
+            "name": "(Apache 2.0)"
+        },
+        "version": "版本号:(v1.0)"
+    },
+    "host": "localhost:8082",
+    "basePath": "/",
+    "paths": {
+        "/delete": {
+            "post": {
+                "description": "删除壁纸",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DeleteWallpaper"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "解析请求body错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "请求路径错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "服务器内部错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/get": {
+            "post": {
+                "description": "获取单个壁纸",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "GetWallpaper"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "仓库名",
+                        "name": "bucketName",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "文件名",
+                        "name": "fileName",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "解析请求body错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "请求路径错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "服务器内部错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/wallpaper/list": {
+            "post": {
+                "description": "壁纸列表",
+                "tags": [
+                    "ListWallpaper"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "返回数据",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "解析请求body错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "请求路径错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "服务器内部错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/wallpaper/upload": {
+            "post": {
+                "description": "上传壁纸",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "UploadWallpaper"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "仓库名",
+                        "name": "bucketName",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "文件路径",
+                        "name": "file",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "解析请求body错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "请求路径错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "服务器内部错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

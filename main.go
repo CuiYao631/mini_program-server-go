@@ -9,11 +9,13 @@ package main
 
 import (
 	"context"
+	echoSwagger "github.com/swaggo/echo-swagger"
 	"log"
 	"os"
 	"time"
 
 	"github.com/CuiYao631/mini_program-server-go/controller"
+	_ "github.com/CuiYao631/mini_program-server-go/docs"
 	"github.com/CuiYao631/mini_program-server-go/ent"
 	"github.com/CuiYao631/mini_program-server-go/ent/migrate"
 	"github.com/CuiYao631/mini_program-server-go/repository"
@@ -28,6 +30,15 @@ import (
 const Intervaltime = 20 * time.Minute
 const IntervalNum = 3
 
+// @title 标题
+// @version 版本号:(v1.0)
+// @description 描述
+// @contact.name 联系人
+// @contact.url  联系网址
+// @contact.email 联系人邮箱
+// @license.name (Apache 2.0)
+// @host localhost:8082
+// @BasePath /
 func main() {
 	// res := retryablehttp.NewClient()
 	// //最大时间间隔时间为20分钟
@@ -85,5 +96,6 @@ func main() {
 	m := e.Group("/minio")
 	ctrl.MinioRoute(m)
 
+	e.GET("/swagger/*", echoSwagger.WrapHandler)
 	e.Logger.Fatal(e.Start(":8082"))
 }
