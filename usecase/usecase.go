@@ -9,6 +9,11 @@ package usecase
 import (
 	"github.com/CuiYao631/mini_program-server-go/repository"
 	"github.com/minio/minio-go/v7"
+	"os"
+)
+
+var (
+	Host = os.Getenv("APIHOST")
 )
 
 type Usecase interface {
@@ -19,8 +24,9 @@ type Usecase interface {
 type usecase struct {
 	repo        repository.Repository
 	minioClient *minio.Client
+	host        string
 }
 
 func MakeUsecase(repo repository.Repository, minioClient *minio.Client) *usecase {
-	return &usecase{repo: repo, minioClient: minioClient}
+	return &usecase{repo: repo, minioClient: minioClient, host: Host}
 }

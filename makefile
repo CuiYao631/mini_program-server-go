@@ -1,7 +1,8 @@
 .PHONY: dev
 
 dev: export COURSE_PLAN_POSTGRESQL_DSN=host=localhost port=5432 user=admin password=password dbname=postgres sslmode=disable
-dev: export ENDPOINT=tencent.xcuitech.com:1688
+dev: export ENDPOINT=www.xcuitech.com:9000
+dev: export APIHOST=http://www.xcuitech.com:9000
 dev: export ACCESSKEYID=admin
 dev: export ACCESSKEY=password
 

@@ -49,7 +49,8 @@ func (uc *usecase) ListWallpaper(ctx context.Context) (entity.Wallpaper, error) 
 			return entity.Wallpaper{}, object.Err
 		}
 		//fmt.Println(object.Key)
-		links = append(links, "https://tencent.xcuitech.com:1688/wallpaper/"+object.Key)
+		//links = append(links, "https://tencent.xcuitech.com:1688/wallpaper/"+object.Key)
+		links = append(links, uc.host+"/wallpaper/"+object.Key)
 	}
 	wallpaper := entity.Wallpaper{
 		Links: links,
@@ -58,7 +59,8 @@ func (uc *usecase) ListWallpaper(ctx context.Context) (entity.Wallpaper, error) 
 }
 
 func (uc *usecase) GetWallpaper(ctx context.Context, bucketName, fileName string) (string, error) {
-	return "https://tencent.xcuitech.com:1688/" + bucketName + "/" + fileName, nil
+	return uc.host + "/" + bucketName + "/" + fileName, nil
+	//return "https://tencent.xcuitech.com:1688/" + bucketName + "/" + fileName, nil
 }
 
 func (uc *usecase) DeleteWallpaper(ctx context.Context, id string) error {

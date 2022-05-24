@@ -58,7 +58,7 @@ func main() {
 	//minio
 	minioClient, err := minio.New(os.Getenv("ENDPOINT"), &minio.Options{
 		Creds:  credentials.NewStaticV4(os.Getenv("ACCESSKEYID"), os.Getenv("ACCESSKEY"), ""),
-		Secure: true,
+		Secure: false,
 	})
 	if err != nil {
 		log.Fatalf("minio failed: %v", err)
