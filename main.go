@@ -9,8 +9,10 @@ package main
 
 import (
 	"context"
+	"github.com/CuiYao631/mini_program-server-go/wechatGongZhong"
 	echoSwagger "github.com/swaggo/echo-swagger"
 	"log"
+	"net/http"
 	"os"
 	"time"
 
@@ -81,8 +83,11 @@ func main() {
 
 	//route
 	e.GET("/", ctrl.Root)
-	e.POST("home", ctrl.Home)
+	//微信公众号
+	http.HandleFunc("/wechat", wechatGongZhong.ProcRequest)
+	go http.ListenAndServe(":8083", nil)
 
+	e.POST("home", ctrl.Home)
 	//user
 	g := e.Group("/user")
 	ctrl.UserRoute(g)
