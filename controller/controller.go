@@ -15,6 +15,10 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+type HoneWallpaper struct {
+	URL string
+}
+
 type Controller interface {
 	HoneWallpaper(c echo.Context) error
 	// Resources 资源
@@ -38,7 +42,8 @@ func (ctrl *controller) HoneWallpaper(c echo.Context) error {
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest)
 	}
-	return echo.NewHTTPError(http.StatusOK, url)
+	honeWallpaper := HoneWallpaper{url}
+	return echo.NewHTTPError(http.StatusOK, honeWallpaper)
 }
 func (ctrl *controller) Home(c echo.Context) error {
 	resources, err := ctrl.uc.ListResources(c.Request().Context())
