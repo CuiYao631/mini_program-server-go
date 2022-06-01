@@ -54,7 +54,7 @@ func (ctrl *controller) Home(c echo.Context) error {
 	for _, v := range resources {
 		image := entity.RotationImage{
 			Url:         v.Icon,
-			ResourcesID: v.ID,
+			ResourcesID: v.Name,
 		}
 		images = append(images, image)
 
