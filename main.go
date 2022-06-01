@@ -88,6 +88,7 @@ func main() {
 	go http.ListenAndServe(":8083", nil)
 
 	e.POST("home", ctrl.Home)
+	e.POST("/homeImage", ctrl.HoneWallpaper)
 	//user
 	g := e.Group("/user")
 	ctrl.UserRoute(g)

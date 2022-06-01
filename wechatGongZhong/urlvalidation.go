@@ -48,13 +48,3 @@ func ProcRequest(w http.ResponseWriter, r *http.Request) {
 	}
 	log.Println("Wechat Service: validateUrl Ok!")
 }
-
-//func main() {
-//	log.Println("Wechat Service: Start!")
-//	http.HandleFunc("/", procRequest)
-//	err := http.ListenAndServe(":80", nil)
-//	if err != nil {
-//		log.Fatal("Wechat Service: ListenAndServe failed, ", err)
-//	}
-//	log.Println("Wechat Service: Stop!")
-//}

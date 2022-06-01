@@ -16,6 +16,7 @@ import (
 )
 
 type Controller interface {
+	HoneWallpaper(c echo.Context) error
 	// Resources 资源
 	Resources
 	// Wallpaper 壁纸
@@ -31,6 +32,13 @@ func MakeController(uc usecase.Usecase) *controller {
 func (ctrl *controller) Root(c echo.Context) error {
 
 	return echo.NewHTTPError(http.StatusOK, "Welcome to the xcui_Toolbox")
+}
+func (ctrl *controller) HoneWallpaper(c echo.Context) error {
+	url, err := ctrl.uc.GetWallpaper(c.Request().Context(), "homeimage", "homeimage.JPG")
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest)
+	}
+	return echo.NewHTTPError(http.StatusOK, url)
 }
 func (ctrl *controller) Home(c echo.Context) error {
 	resources, err := ctrl.uc.ListResources(c.Request().Context())
