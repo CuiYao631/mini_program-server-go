@@ -10,6 +10,7 @@ package usecase
 import (
 	"context"
 	"mime/multipart"
+	"strings"
 
 	"github.com/CuiYao631/mini_program-server-go/entity"
 )
@@ -82,5 +83,21 @@ func (uc *usecase) GetResources(ctx context.Context, id string) (entity.Resource
 }
 
 func (uc *usecase) DeleteResources(ctx context.Context, id string) error {
+	entres, err := uc.repo.GetResources(ctx, id)
+	if err != nil {
+		return err
+	}
+	trimStr := ""
+	str := entres.Icon[0:5]
+	if str[len(str)-1:] == ":" {
+		trimStr = strings.Trim(entres.Icon, "http://"+uc.host)
+	} else {
+		trimStr = strings.Trim(entres.Icon, "https://"+uc.host)
+	}
+	strArr := strings.Split(trimStr, "/")
+	err = uc.DeleteWallpaper(ctx, strArr[0], strArr[1])
+	if err != nil {
+		return err
+	}
 	return uc.repo.DeleteResources(ctx, id)
 }

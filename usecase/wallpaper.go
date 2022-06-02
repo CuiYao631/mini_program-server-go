@@ -14,7 +14,7 @@ type Wallpaper interface {
 	UploadWallpaper(ctx context.Context, bucketName string, file *multipart.FileHeader) (string, string, error)
 	ListWallpaper(ctx context.Context) (entity.Wallpaper, error)
 	GetWallpaper(ctx context.Context, bucketName, fileName string) (string, error)
-	DeleteWallpaper(ctx context.Context, id string) error
+	DeleteWallpaper(ctx context.Context, bucketName, fileName string) error
 }
 
 func (uc *usecase) UploadWallpaper(ctx context.Context, bucketName string, file *multipart.FileHeader) (string, string, error) {
@@ -63,6 +63,11 @@ func (uc *usecase) GetWallpaper(ctx context.Context, bucketName, fileName string
 	//return "https://tencent.xcuitech.com:1688/" + bucketName + "/" + fileName, nil
 }
 
-func (uc *usecase) DeleteWallpaper(ctx context.Context, id string) error {
-	panic("not implemented") // TODO: Implement
+func (uc *usecase) DeleteWallpaper(ctx context.Context, bucketName, fileName string) error {
+	if err := uc.minioClient.RemoveObject(ctx, bucketName, fileName, minio.RemoveObjectOptions{
+		ForceDelete: false,
+	}); err != nil {
+		return err
+	}
+	return nil
 }
