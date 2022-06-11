@@ -56,6 +56,7 @@ func (uc *usecase) ListResources(ctx context.Context) ([]entity.Resources, error
 			Tag:      "",
 			Desc:     v.Desc,
 			Url:      v.URL,
+			Explain:  v.Explain,
 			CreateAt: v.CreatedAt,
 			UpdateAt: v.UpdatedAt,
 		}
