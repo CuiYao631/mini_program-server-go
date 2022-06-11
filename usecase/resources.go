@@ -77,6 +77,7 @@ func (uc *usecase) GetResources(ctx context.Context, id string) (entity.Resource
 		Tag:      "",
 		Desc:     entres.Desc,
 		Url:      entres.URL,
+		Explain:  entres.Explain,
 		CreateAt: entres.CreatedAt,
 		UpdateAt: entres.UpdatedAt,
 	}
