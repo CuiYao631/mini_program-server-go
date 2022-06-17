@@ -12,7 +12,6 @@ import (
 	"github.com/CuiYao631/mini_program-server-go/wechatGongZhong"
 	echoSwagger "github.com/swaggo/echo-swagger"
 	"log"
-	"net/http"
 	"os"
 	"time"
 
@@ -81,11 +80,15 @@ func main() {
 	pro := usecase.MakeUsecase(response, minioClient)
 	ctrl := controller.MakeController(pro)
 
+	wgc := wechatGongZhong.MakeWechatGongZhong()
 	//route
 	e.GET("/", ctrl.Root)
+
 	//微信公众号
-	http.HandleFunc("/wechat", wechatGongZhong.ProcRequest)
-	go http.ListenAndServe(":8083", nil)
+	//http.HandleFunc("/wechat", wechatGongZhong.ProcRequest)
+	//go http.ListenAndServe(":8083", nil)
+
+	e.GET("/wechat", wgc.EchoProcRequest)
 
 	e.POST("home", ctrl.Home)
 	e.POST("/homeImage", ctrl.HoneWallpaper)
