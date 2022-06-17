@@ -9,27 +9,22 @@ package main
 
 import (
 	"context"
-	"github.com/CuiYao631/mini_program-server-go/wechatGongZhong"
-	echoSwagger "github.com/swaggo/echo-swagger"
-	"log"
-	"os"
-	"time"
-
 	"github.com/CuiYao631/mini_program-server-go/controller"
 	_ "github.com/CuiYao631/mini_program-server-go/docs"
 	"github.com/CuiYao631/mini_program-server-go/ent"
 	"github.com/CuiYao631/mini_program-server-go/ent/migrate"
 	"github.com/CuiYao631/mini_program-server-go/repository"
 	"github.com/CuiYao631/mini_program-server-go/usecase"
+	"github.com/CuiYao631/mini_program-server-go/wechatGongZhong"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	_ "github.com/lib/pq"
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
+	echoSwagger "github.com/swaggo/echo-swagger"
+	"log"
+	"os"
 )
-
-const Intervaltime = 20 * time.Minute
-const IntervalNum = 3
 
 // @title 标题
 // @version 版本号:(v1.0)
@@ -41,16 +36,6 @@ const IntervalNum = 3
 // @host localhost:8082
 // @BasePath /
 func main() {
-	// res := retryablehttp.NewClient()
-	// //最大时间间隔时间为20分钟
-	// res.RetryWaitMax = Intervaltime
-	// //重新连接次数为3次
-	// res.RetryMax = IntervalNum
-	// Client := res.StandardClient()
-	// var rest request.GetAccTokenResponse
-	// request.GetAccessToken(Client, "wxb07ca737e71b5b7b", "077af2c2fa57aa32e7295bc40f188a54", &rest)
-	// request.GetWeiXinJsapi_Ticket(Client, rest.AccessToken, &rest)
-	// log.Println(rest.Ticket)
 
 	ctx := context.Background()
 	e := echo.New()
@@ -84,10 +69,7 @@ func main() {
 	//route
 	e.GET("/", ctrl.Root)
 
-	//微信公众号
-	//http.HandleFunc("/wechat", wechatGongZhong.ProcRequest)
-	//go http.ListenAndServe(":8083", nil)
-
+	//公众号小程序回调
 	e.GET("/wechat", wgc.EchoProcRequest)
 
 	e.POST("home", ctrl.Home)
