@@ -27,8 +27,11 @@ func (ctrl *controller) UserRoute(g *echo.Group) {
 	g.POST("/list", ctrl.ListUser)
 	g.POST("/delete", ctrl.DeleteUser)
 }
-func (ctrl *controller) Login(ctx echo.Context) error {
-	return echo.NewHTTPError(http.StatusOK, "CreateUser")
+func (ctrl *controller) Login(c echo.Context) error {
+	name := c.FormValue("name")
+	password := c.FormValue("password")
+
+	return echo.NewHTTPError(http.StatusOK, "username:"+name+"、password:"+password+"")
 }
 func (ctrl *controller) CreateUser(ctx echo.Context) error {
 	return echo.NewHTTPError(http.StatusOK, "CreateUser")
