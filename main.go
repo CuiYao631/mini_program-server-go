@@ -9,6 +9,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"github.com/CuiYao631/mini_program-server-go/controller"
 	_ "github.com/CuiYao631/mini_program-server-go/docs"
 	"github.com/CuiYao631/mini_program-server-go/ent"
@@ -71,6 +72,8 @@ func main() {
 		//预编译处理的目的是为了优化后期渲染模版文件的速度
 		Templates: template.Must(template.ParseGlob("views/*.html")),
 	}
+
+	fmt.Println(os.Args)
 	//向echo实例注册模版引擎
 	e.Renderer = t
 
