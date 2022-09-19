@@ -22,6 +22,7 @@ import (
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
 	echoSwagger "github.com/swaggo/echo-swagger"
+	"html/template"
 	"log"
 	"os"
 )
@@ -60,6 +61,18 @@ func main() {
 	if err != nil {
 		log.Fatalf("minio failed: %v", err)
 	}
+	//设置静态资源url前缀和目录
+	//这里设置 /static 为静态资源url的前缀，当前程序运行目录下面的static目录为静态资源目录
+	e.Static("/static", "static")
+
+	//初始化模版引擎
+	t := &controller.Template{
+		//模版引擎支持提前编译模版, 这里对views目录下以html结尾的模版文件进行预编译处理
+		//预编译处理的目的是为了优化后期渲染模版文件的速度
+		Templates: template.Must(template.ParseGlob("./views/*.html")),
+	}
+	//向echo实例注册模版引擎
+	e.Renderer = t
 
 	response := repository.MakeRepository(client)
 	pro := usecase.MakeUsecase(response, minioClient)

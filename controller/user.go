@@ -21,10 +21,14 @@ type User interface {
 }
 
 func (ctrl *controller) UserRoute(g *echo.Group) {
+	g.POST("/login", ctrl.Login)
 	g.POST("/add", ctrl.CreateUser)
 	g.POST("/update", ctrl.UpdateUser)
 	g.POST("/list", ctrl.ListUser)
 	g.POST("/delete", ctrl.DeleteUser)
+}
+func (ctrl *controller) Login(ctx echo.Context) error {
+	return echo.NewHTTPError(http.StatusOK, "CreateUser")
 }
 func (ctrl *controller) CreateUser(ctx echo.Context) error {
 	return echo.NewHTTPError(http.StatusOK, "CreateUser")

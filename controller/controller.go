@@ -8,6 +8,8 @@
 package controller
 
 import (
+	"html/template"
+	"io"
 	"net/http"
 
 	"github.com/CuiYao631/mini_program-server-go/entity"
@@ -17,6 +19,15 @@ import (
 
 type HoneWallpaper struct {
 	URL string
+}
+
+// Template 实现Renderer 接口
+type Template struct {
+	Templates *template.Template
+}
+
+func (t *Template) Render(w io.Writer, name string, data interface{}, c echo.Context) error {
+	return t.Templates.ExecuteTemplate(w, name, data)
 }
 
 type Controller interface {
@@ -35,7 +46,7 @@ func MakeController(uc usecase.Usecase) *controller {
 }
 func (ctrl *controller) Root(c echo.Context) error {
 
-	return echo.NewHTTPError(http.StatusOK, "Welcome to the xcui_Toolbox")
+	return c.Render(200, "index.html", "World")
 }
 func (ctrl *controller) HoneWallpaper(c echo.Context) error {
 	url, err := ctrl.uc.GetWallpaper(c.Request().Context(), "homeimage", "homeimage.JPG")
