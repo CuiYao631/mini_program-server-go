@@ -69,7 +69,7 @@ func main() {
 	t := &controller.Template{
 		//模版引擎支持提前编译模版, 这里对views目录下以html结尾的模版文件进行预编译处理
 		//预编译处理的目的是为了优化后期渲染模版文件的速度
-		Templates: template.Must(template.ParseGlob("./views/*.html")),
+		Templates: template.Must(template.ParseGlob("views/*.html")),
 	}
 	//向echo实例注册模版引擎
 	e.Renderer = t
