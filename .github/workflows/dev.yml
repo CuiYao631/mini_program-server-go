@@ -2,22 +2,66 @@ name: mini_program-server-go
 
 on:
   push:
-    branches: dev
+    branches: 
+      - dev
 
 jobs:
-
-  build:
+  buildAndPush:
     runs-on: ubuntu-latest
+    env:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          go-version: 1.17.x
+      - name: Setup env
+        shell: bash
+        run: |
+          echo "GOPATH=$(dirname $GITHUB_WORKSPACE)" >> $GITHUB_ENV
+          echo "$(dirname $GITHUB_WORKSPACE)/bin" >> $GITHUB_PATH
+      - uses: actions/checkout@v2
+        with:
+          ref: 'dev'
+      - name: Echo go env
+        run: |
+          go env
+      - name: Set go env
+        shell: bash
+        run: |
+          go env -w CGO_ENABLED=0
+      - name: Run go get
+        run: |
+          git config --global url."https://${{ secrets.GIT_PERSONAL_TOKEN }}:x-oauth-basic@github.com/".insteadOf "https://github.com/"
+          go get -v ./...
+      - name: Build go binary
+        run: |
+          go build -v -a -o release/main
+      - name: set up QEMU
+        uses: docker/setup-qemu-action@v1
+        with:
+          platforms: all
+      - name: set up docker buildx
+        uses: docker/setup-buildx-action@v1
+        with:
+          version: latest
+      - name: login to ali registry
+        uses: docker/login-action@v1
+        with:
+          registry: registry.cn-hangzhou.aliyuncs.com
+          username: ${{secrets.ALI_REGISTRY_USERNAME}}
+          password: ${{secrets.ALI_REGISTRY_PASSWORD}}
+      - name: Build and push docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: registry.cn-hangzhou.aliyuncs.com/xiaocui_server/mini_program-server-go:dev
 
-    - name: Set up Go
-      uses: actions/setup-go@v2
-      with:
-        go-version: 1.17
+      - uses: act10ns/slack@v1
+        with:
+          status: ${{job.status}}
+          channel: '#portal'
+        if: always()
 
-    - name: Build
-      run: go build -v ./...
-
-    - name: Test
-      run: go test -v ./...

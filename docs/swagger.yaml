@@ -1,0 +1,136 @@
+basePath: /
+host: localhost:8082
+info:
+  contact:
+    email: 联系人邮箱
+    name: 联系人
+    url: 联系网址
+  description: 描述
+  license:
+    name: (Apache 2.0)
+  title: 标题
+  version: 版本号:(v1.0)
+paths:
+  /delete:
+    post:
+      consumes:
+      - application/json
+      description: 删除壁纸
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: 解析请求body错误
+          schema:
+            type: string
+        "404":
+          description: 请求路径错误
+          schema:
+            type: string
+        "500":
+          description: 服务器内部错误
+          schema:
+            type: string
+      tags:
+      - DeleteWallpaper
+  /get:
+    post:
+      consumes:
+      - application/json
+      description: 获取单个壁纸
+      parameters:
+      - description: 仓库名
+        in: query
+        name: bucketName
+        required: true
+        type: string
+      - description: 文件名
+        in: query
+        name: fileName
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: 解析请求body错误
+          schema:
+            type: string
+        "404":
+          description: 请求路径错误
+          schema:
+            type: string
+        "500":
+          description: 服务器内部错误
+          schema:
+            type: string
+      tags:
+      - GetWallpaper
+  /wallpaper/list:
+    post:
+      description: 壁纸列表
+      responses:
+        "200":
+          description: 返回数据
+          schema:
+            type: string
+        "400":
+          description: 解析请求body错误
+          schema:
+            type: string
+        "404":
+          description: 请求路径错误
+          schema:
+            type: string
+        "500":
+          description: 服务器内部错误
+          schema:
+            type: string
+      tags:
+      - ListWallpaper
+  /wallpaper/upload:
+    post:
+      consumes:
+      - application/json
+      description: 上传壁纸
+      parameters:
+      - description: 仓库名
+        in: query
+        name: bucketName
+        required: true
+        type: string
+      - description: 文件路径
+        in: query
+        name: file
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: 解析请求body错误
+          schema:
+            type: string
+        "404":
+          description: 请求路径错误
+          schema:
+            type: string
+        "500":
+          description: 服务器内部错误
+          schema:
+            type: string
+      tags:
+      - UploadWallpaper
+swagger: "2.0"

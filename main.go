@@ -2,67 +2,105 @@
  * @Author: CuiYao
  * @Date: 2021-12-10 16:31:55
  * @Last Modified by: CuiYao
- * @Last Modified time: 2021-12-10 18:02:25
+ * @Last Modified time: 2022-01-28 10:25:47
  */
 
 package main
 
 import (
 	"context"
-	"log"
-	"os"
-	"time"
-
 	"github.com/CuiYao631/mini_program-server-go/controller"
+	_ "github.com/CuiYao631/mini_program-server-go/docs"
 	"github.com/CuiYao631/mini_program-server-go/ent"
 	"github.com/CuiYao631/mini_program-server-go/ent/migrate"
 	"github.com/CuiYao631/mini_program-server-go/repository"
 	"github.com/CuiYao631/mini_program-server-go/usecase"
+	"github.com/CuiYao631/mini_program-server-go/wechatGongZhong"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	_ "github.com/lib/pq"
+	"github.com/minio/minio-go/v7"
+	"github.com/minio/minio-go/v7/pkg/credentials"
+	echoSwagger "github.com/swaggo/echo-swagger"
+	"html/template"
+	"log"
+	"os"
 )
 
-const Intervaltime = 20 * time.Minute
-const IntervalNum = 3
-
+// @title 标题
+// @version 版本号:(v1.0)
+// @description 描述
+// @contact.name 联系人
+// @contact.url  联系网址
+// @contact.email 联系人邮箱
+// @license.name (Apache 2.0)
+// @host localhost:8082
+// @BasePath /
 func main() {
-	// res := retryablehttp.NewClient()
-	// //最大时间间隔时间为20分钟
-	// res.RetryWaitMax = Intervaltime
-	// //重新连接次数为3次
-	// res.RetryMax = IntervalNum
-	// Client := res.StandardClient()
-	// var rest request.GetAccTokenResponse
-	// request.GetAccessToken(Client, "wxb07ca737e71b5b7b", "077af2c2fa57aa32e7295bc40f188a54", &rest)
-	// request.GetWeiXinJsapi_Ticket(Client, rest.AccessToken, &rest)
-	// log.Println(rest.Ticket)
 
 	ctx := context.Background()
 	e := echo.New()
 	e.Use(middleware.Logger())
-	// e.Use(middleware.Recover())
 
-	client, err := ent.Open("postgres", os.Getenv("ARMINIP_POSTGRESQL_DSN"))
+	//sql
+	client, err := ent.Open("postgres", os.Getenv("COURSE_PLAN_POSTGRESQL_DSN"))
 	if err != nil {
 		log.Fatal("connect sql failed", err)
 	}
 	defer client.Close()
-	client.Schema.Create(ctx, migrate.WithDropIndex(true))
-	if err != nil {
+	if err = client.Schema.Create(ctx, migrate.WithDropIndex(true)); err != nil {
 		log.Fatalf("failed creating schema resources: %v", err)
 	}
+	//redis
+
+	//minio
+	minioClient, err := minio.New(os.Getenv("ENDPOINT"), &minio.Options{
+		Creds:  credentials.NewStaticV4(os.Getenv("ACCESSKEYID"), os.Getenv("ACCESSKEY"), ""),
+		Secure: true,
+	})
+	if err != nil {
+		log.Fatalf("minio failed: %v", err)
+	}
+	//设置静态资源url前缀和目录
+	//这里设置 /static 为静态资源url的前缀，当前程序运行目录下面的static目录为静态资源目录
+	e.Static("/static", "static")
+
+	//初始化模版引擎
+	t := &controller.Template{
+		//模版引擎支持提前编译模版, 这里对views目录下以html结尾的模版文件进行预编译处理
+		//预编译处理的目的是为了优化后期渲染模版文件的速度
+		Templates: template.Must(template.ParseGlob("views/*.html")),
+	}
+
+	//向echo实例注册模版引擎
+	e.Renderer = t
 
 	response := repository.MakeRepository(client)
-	pro := usecase.MakeUsecase(response)
+	pro := usecase.MakeUsecase(response, minioClient)
 	ctrl := controller.MakeController(pro)
 
+	wgc := wechatGongZhong.MakeWechatGongZhong()
+	//route
+	e.GET("/", ctrl.Root)
+
+	//公众号小程序回调
+	e.GET("/wechat", wgc.EchoProcRequest)
+
+	e.POST("home", ctrl.Home)
+	e.POST("/homeImage", ctrl.HoneWallpaper)
+	//user
 	g := e.Group("/user")
-	g.POST("/add", ctrl.CreateUser)
-	g.POST("/update", ctrl.UpdateUser)
-	g.POST("/list", ctrl.ListUser)
-	g.POST("/delete", ctrl.DeleteUser)
+	ctrl.UserRoute(g)
+	//resources
+	r := e.Group("/recs")
+	ctrl.ResourcesRoute(r)
+	//wallpaper
+	w := e.Group("/wallpaper")
+	ctrl.WallpaperRoute(w)
+	//minio
+	m := e.Group("/minio")
+	ctrl.MinioRoute(m)
 
+	e.GET("/swagger/*", echoSwagger.WrapHandler)
 	e.Logger.Fatal(e.Start(":8082"))
-
 }

@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"entgo.io/ent"
+	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"github.com/segmentio/ksuid"
 )
@@ -20,19 +21,21 @@ func (Resources) Fields() []ent.Field {
 			func() string {
 				return ksuid.New().String()
 			}), //id
-		field.String("title"),                      //标题
-		field.String("icon"),                       //图标
-		field.String("tag"),                        //标签
+		field.String("name"),                       //名称
+		field.String("icon").Optional(),            //图标
 		field.String("desc"),                       //描述
-		field.String("url"),                        //链接
-		field.String("created_user_name"),          //创建人员
-		field.String("updated_user_name"),          //更新人员
+		field.String("explain"),                    //说明
+		field.String("url"),                        //url
+		field.Bool("is_top"),                       //是否置顶
 		field.Time("created_at").Default(time.Now), //创建时间
 		field.Time("updated_at").Default(time.Now).UpdateDefault(time.Now), //更新时间
+
 	}
 }
 
 // Edges of the Resources.
 func (Resources) Edges() []ent.Edge {
-	return nil
+	return []ent.Edge{
+		edge.From("tag", Tag.Type).Ref("resources"),
+	}
 }
