@@ -8,11 +8,8 @@
 package main
 
 import (
-	"context"
 	"github.com/CuiYao631/mini_program-server-go/controller"
 	_ "github.com/CuiYao631/mini_program-server-go/docs"
-	"github.com/CuiYao631/mini_program-server-go/ent"
-	"github.com/CuiYao631/mini_program-server-go/ent/migrate"
 	"github.com/CuiYao631/mini_program-server-go/repository"
 	"github.com/CuiYao631/mini_program-server-go/usecase"
 	"github.com/CuiYao631/mini_program-server-go/wechatGongZhong"
@@ -38,19 +35,19 @@ import (
 // @BasePath /
 func main() {
 
-	ctx := context.Background()
+	//ctx := context.Background()
 	e := echo.New()
 	e.Use(middleware.Logger())
 
 	//sql
-	client, err := ent.Open("postgres", os.Getenv("COURSE_PLAN_POSTGRESQL_DSN"))
-	if err != nil {
-		log.Fatal("connect sql failed", err)
-	}
-	defer client.Close()
-	if err = client.Schema.Create(ctx, migrate.WithDropIndex(true)); err != nil {
-		log.Fatalf("failed creating schema resources: %v", err)
-	}
+	//client, err := ent.Open("postgres", os.Getenv("COURSE_PLAN_POSTGRESQL_DSN"))
+	//if err != nil {
+	//	log.Fatal("connect sql failed", err)
+	//}
+	//defer client.Close()
+	//if err = client.Schema.Create(ctx, migrate.WithDropIndex(true)); err != nil {
+	//	log.Fatalf("failed creating schema resources: %v", err)
+	//}
 	//redis
 
 	//minio
@@ -75,7 +72,7 @@ func main() {
 	//向echo实例注册模版引擎
 	e.Renderer = t
 
-	response := repository.MakeRepository(client)
+	response := repository.MakeRepository(nil)
 	pro := usecase.MakeUsecase(response, minioClient)
 	ctrl := controller.MakeController(pro)
 

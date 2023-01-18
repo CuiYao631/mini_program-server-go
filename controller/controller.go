@@ -71,7 +71,7 @@ func (ctrl *controller) Home(c echo.Context) error {
 
 	}
 
-	//TODO 这段代码啥作用，忘了
+	//TODO 置顶的数据
 	// for _, v := range resources {
 	// 	if v.Topping {
 	// 		image := entity.RotationImage{
