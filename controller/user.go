@@ -31,6 +31,11 @@ func (ctrl *controller) Login(c echo.Context) error {
 	name := c.FormValue("name")
 	password := c.FormValue("password")
 
+	if name == "admin" && password == "admin" {
+		return echo.NewHTTPError(http.StatusOK)
+	} else {
+		echo.NewHTTPError(http.StatusBadRequest, "not user")
+	}
 	return echo.NewHTTPError(http.StatusOK, "username:"+name+"、password:"+password+"")
 }
 func (ctrl *controller) CreateUser(ctx echo.Context) error {
