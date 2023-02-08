@@ -34,7 +34,7 @@ func (ctrl *controller) Login(c echo.Context) error {
 	if name == "admin" && password == "admin" {
 		return echo.NewHTTPError(http.StatusOK)
 	} else {
-		echo.NewHTTPError(http.StatusBadRequest, "not user")
+		return echo.NewHTTPError(http.StatusBadRequest, "not user")
 	}
 	return echo.NewHTTPError(http.StatusOK, "username:"+name+"、password:"+password+"")
 }
