@@ -14,6 +14,5 @@ require (
 	github.com/swaggo/echo-swagger v1.3.2
 	github.com/swaggo/swag v1.8.2
 	golang.org/x/crypto v0.0.0-20220518034528-6f7dac969898 // indirect
-	golang.org/x/net v0.0.0-20220520000938-2e3eb7b945c2 // indirect
-	golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a // indirect
+	golang.org/x/net v0.7.0 // indirect
 )
