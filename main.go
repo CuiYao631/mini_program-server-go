@@ -18,6 +18,7 @@ import (
 	_ "github.com/lib/pq"
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
+	"github.com/sashabaranov/go-openai"
 	echoSwagger "github.com/swaggo/echo-swagger"
 	"html/template"
 	"log"
@@ -58,6 +59,10 @@ func main() {
 	if err != nil {
 		log.Fatalf("minio failed: %v", err)
 	}
+
+	// ChatGPT-3
+	client := openai.NewClient("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")
+
 	//设置静态资源url前缀和目录
 	//这里设置 /static 为静态资源url的前缀，当前程序运行目录下面的static目录为静态资源目录
 	e.Static("/static", "static")
@@ -73,7 +78,7 @@ func main() {
 	e.Renderer = t
 
 	response := repository.MakeRepository(nil)
-	pro := usecase.MakeUsecase(response, minioClient)
+	pro := usecase.MakeUsecase(response, minioClient, client)
 	ctrl := controller.MakeController(pro)
 
 	wgc := wechatGongZhong.MakeWechatGongZhong()
@@ -97,6 +102,9 @@ func main() {
 	//minio
 	m := e.Group("/minio")
 	ctrl.MinioRoute(m)
+	//ChatGPT
+	cg := e.Group("/chatGpt")
+	ctrl.ChatGptRoute(cg)
 
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
 	e.Logger.Fatal(e.Start(":8082"))

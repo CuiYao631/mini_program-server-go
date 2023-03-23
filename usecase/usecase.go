@@ -9,6 +9,7 @@ package usecase
 import (
 	"github.com/CuiYao631/mini_program-server-go/repository"
 	"github.com/minio/minio-go/v7"
+	"github.com/sashabaranov/go-openai"
 	"os"
 )
 
@@ -20,13 +21,15 @@ type Usecase interface {
 	Resources
 	Minio
 	Wallpaper
+	ChatGpt
 }
 type usecase struct {
 	repo        repository.Repository
 	minioClient *minio.Client
 	host        string
+	opAi        *openai.Client
 }
 
-func MakeUsecase(repo repository.Repository, minioClient *minio.Client) *usecase {
-	return &usecase{repo: repo, minioClient: minioClient, host: Host}
+func MakeUsecase(repo repository.Repository, minioClient *minio.Client, opAi *openai.Client) *usecase {
+	return &usecase{repo: repo, minioClient: minioClient, host: Host, opAi: opAi}
 }

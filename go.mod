@@ -10,6 +10,7 @@ require (
 	github.com/lib/pq v1.10.4
 	github.com/mattn/go-colorable v0.1.12 // indirect
 	github.com/minio/minio-go/v7 v7.0.21
+	github.com/sashabaranov/go-openai v1.5.6
 	github.com/segmentio/ksuid v1.0.4
 	github.com/swaggo/echo-swagger v1.3.2
 	github.com/swaggo/swag v1.8.2
