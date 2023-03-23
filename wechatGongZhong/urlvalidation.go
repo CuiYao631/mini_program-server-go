@@ -73,32 +73,70 @@ type WXTextMsg struct {
 
 // WXMsgReceive 微信消息接收
 func (ctrl *wechatGongZhong) WXMsgReceive(e echo.Context) error {
-	var textMsg WXTextMsg
-	//err := e.ShouldBindXML(&textMsg)
-	err := e.Bind(&textMsg)
-	if err != nil {
-		log.Printf("[消息接收] - XML数据包解析失败: %v\n", err)
-		//return
-	}
-	log.Printf("[消息接收] - 收到消息, 消息类型为: %s, 消息内容为: %s\n", textMsg.MsgType, textMsg.Content)
-	// 对接收的消息进行被动回复
-	//return WXMsgReply(e, textMsg.ToUserName, textMsg.FromUserName)
+	//var textMsg WXTextMsg
+	////err := e.ShouldBindXML(&textMsg)
+	//err := e.Bind(&textMsg)
+	//if err != nil {
+	//	log.Printf("[消息接收] - XML数据包解析失败: %v\n", err)
+	//	//return
+	//}
+	//log.Printf("[消息接收] - 收到消息, 消息类型为: %s, 消息内容为: %s\n", textMsg.MsgType, textMsg.Content)
+	//// 对接收的消息进行被动回复
+	////return WXMsgReply(e, textMsg.ToUserName, textMsg.FromUserName)
+	//
+	//repTextMsg := WXRepTextMsg{
+	//	ToUserName:   textMsg.ToUserName,
+	//	FromUserName: textMsg.FromUserName,
+	//	CreateTime:   time.Now().Unix(),
+	//	MsgType:      "text",
+	//	Content:      fmt.Sprintf("[消息回复] - %s", time.Now().Format("2006-01-02 15:04:05")),
+	//}
+	//msg, err := xml.Marshal(&repTextMsg)
+	//if err != nil {
+	//	log.Printf("[消息回复] - 将对象进行XML编码出错: %v\n", err)
+	//	//return
+	//}
+	////_, _ = c.Writer.Write(msg)
+	////return echo.NewHTTPError(http.StatusOK, msg)
+	//
+	//return e.XMLBlob(http.StatusOK, msg)
 
-	repTextMsg := WXRepTextMsg{
-		ToUserName:   textMsg.ToUserName,
-		FromUserName: textMsg.FromUserName,
-		CreateTime:   time.Now().Unix(),
-		MsgType:      "text",
-		Content:      fmt.Sprintf("[消息回复] - %s", time.Now().Format("2006-01-02 15:04:05")),
+	// 获取 POST 请求中的消息数据
+	data := make([]byte, e.Request().ContentLength)
+	e.Request().Body.Read(data)
+
+	// 将消息数据解析为一个 XML 结构体
+	var msg WXTextMsg
+	xml.Unmarshal(data, &msg)
+
+	// 根据消息类型生成回复内容
+	var replyMsg WXRepTextMsg
+	switch msg.MsgType {
+	case "text":
+		// 生成文本消息回复
+		replyMsg = WXRepTextMsg{
+			ToUserName:   msg.FromUserName,
+			FromUserName: msg.ToUserName,
+			CreateTime:   time.Now().Unix(),
+			MsgType:      "text",
+			Content:      "您好，欢迎关注我的公众号！",
+		}
+	default:
+		// 默认回复
+		replyMsg = WXRepTextMsg{
+			ToUserName:   msg.FromUserName,
+			FromUserName: msg.ToUserName,
+			CreateTime:   time.Now().Unix(),
+			MsgType:      "text",
+			Content:      "暂不支持此类消息类型的回复。",
+		}
 	}
-	msg, err := xml.Marshal(&repTextMsg)
-	if err != nil {
-		log.Printf("[消息回复] - 将对象进行XML编码出错: %v\n", err)
-		//return
-	}
-	//_, _ = c.Writer.Write(msg)
-	//return echo.NewHTTPError(http.StatusOK, msg)
-	return e.XMLBlob(http.StatusOK, msg)
+
+	// 将回复消息转换为 XML 格式
+	respData, _ := xml.Marshal(replyMsg)
+
+	// 返回回复内容
+	return e.Blob(http.StatusOK, "application/xml", respData)
 }
 
 // WXRepTextMsg 微信回复文本消息结构体
