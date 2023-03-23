@@ -82,7 +82,22 @@ func (ctrl *wechatGongZhong) WXMsgReceive(e echo.Context) error {
 	}
 	log.Printf("[消息接收] - 收到消息, 消息类型为: %s, 消息内容为: %s\n", textMsg.MsgType, textMsg.Content)
 	// 对接收的消息进行被动回复
-	return WXMsgReply(e, textMsg.ToUserName, textMsg.FromUserName)
+	//return WXMsgReply(e, textMsg.ToUserName, textMsg.FromUserName)
+
+	repTextMsg := WXRepTextMsg{
+		ToUserName:   textMsg.ToUserName,
+		FromUserName: textMsg.FromUserName,
+		CreateTime:   time.Now().Unix(),
+		MsgType:      "text",
+		Content:      fmt.Sprintf("[消息回复] - %s", time.Now().Format("2006-01-02 15:04:05")),
+	}
+	msg, err := xml.Marshal(&repTextMsg)
+	if err != nil {
+		log.Printf("[消息回复] - 将对象进行XML编码出错: %v\n", err)
+		//return
+	}
+	//_, _ = c.Writer.Write(msg)
+	return echo.NewHTTPError(http.StatusOK, msg)
 }
 
 // WXRepTextMsg 微信回复文本消息结构体
