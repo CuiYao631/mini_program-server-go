@@ -122,8 +122,8 @@ func (ctrl *wechatGongZhong) WXMsgReceive(e echo.Context) error {
 			ToUserName:   msg.FromUserName,
 			FromUserName: msg.ToUserName,
 			CreateTime:   time.Now().Unix(),
-			MsgType:      res,
-			Content:      "您好，欢迎关注我的公众号！",
+			MsgType:      "text",
+			Content:      res,
 		}
 	default:
 		// 默认回复
