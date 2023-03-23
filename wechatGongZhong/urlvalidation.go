@@ -97,7 +97,8 @@ func (ctrl *wechatGongZhong) WXMsgReceive(e echo.Context) error {
 		//return
 	}
 	//_, _ = c.Writer.Write(msg)
-	return echo.NewHTTPError(http.StatusOK, msg)
+	//return echo.NewHTTPError(http.StatusOK, msg)
+	return e.XMLBlob(http.StatusOK, msg)
 }
 
 // WXRepTextMsg 微信回复文本消息结构体
