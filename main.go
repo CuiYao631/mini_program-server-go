@@ -87,6 +87,7 @@ func main() {
 
 	//公众号小程序回调
 	e.GET("/wechat", wgc.EchoProcRequest)
+	e.POST("/wechat", wgc.WXMsgReceive)
 
 	e.POST("home", ctrl.Home)
 	e.POST("/homeImage", ctrl.HoneWallpaper)

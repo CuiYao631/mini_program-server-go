@@ -15,6 +15,7 @@ import (
 
 type WechatGongZhong interface {
 	EchoProcRequest(e echo.Context) error
+	WXMsgReceive(e echo.Context) error
 }
 
 const (
@@ -71,7 +72,7 @@ type WXTextMsg struct {
 }
 
 // WXMsgReceive 微信消息接收
-func WXMsgReceive(e echo.Context) error {
+func (ctrl *wechatGongZhong) WXMsgReceive(e echo.Context) error {
 	var textMsg WXTextMsg
 	//err := e.ShouldBindXML(&textMsg)
 	err := e.Bind(&textMsg)
