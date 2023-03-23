@@ -81,7 +81,7 @@ func main() {
 	pro := usecase.MakeUsecase(response, minioClient, client)
 	ctrl := controller.MakeController(pro)
 
-	wgc := wechatGongZhong.MakeWechatGongZhong()
+	wgc := wechatGongZhong.MakeWechatGongZhong(client)
 	//route
 	e.GET("/", ctrl.Root)
 

@@ -1,10 +1,12 @@
 package wechatGongZhong
 
 import (
+	"context"
 	"crypto/sha1"
 	"encoding/xml"
 	"fmt"
 	"github.com/labstack/echo/v4"
+	"github.com/sashabaranov/go-openai"
 	"io"
 	"log"
 	"net/http"
@@ -23,10 +25,13 @@ const (
 )
 
 type wechatGongZhong struct {
+	opAi *openai.Client
 }
 
-func MakeWechatGongZhong() *wechatGongZhong {
-	return &wechatGongZhong{}
+func MakeWechatGongZhong(opAi *openai.Client) *wechatGongZhong {
+	return &wechatGongZhong{
+		opAi: opAi,
+	}
 }
 func makeSignature(timestamp, nonce string) string {
 	sl := []string{token, timestamp, nonce}
@@ -71,35 +76,19 @@ type WXTextMsg struct {
 	MsgId        int64
 }
 
+// WXRepTextMsg 微信回复文本消息结构体
+type WXRepTextMsg struct {
+	ToUserName   string
+	FromUserName string
+	CreateTime   int64
+	MsgType      string
+	Content      string
+	// 若不标记XMLName, 则解析后的xml名为该结构体的名称
+	XMLName xml.Name `xml:"xml"`
+}
+
 // WXMsgReceive 微信消息接收
 func (ctrl *wechatGongZhong) WXMsgReceive(e echo.Context) error {
-	//var textMsg WXTextMsg
-	////err := e.ShouldBindXML(&textMsg)
-	//err := e.Bind(&textMsg)
-	//if err != nil {
-	//	log.Printf("[消息接收] - XML数据包解析失败: %v\n", err)
-	//	//return
-	//}
-	//log.Printf("[消息接收] - 收到消息, 消息类型为: %s, 消息内容为: %s\n", textMsg.MsgType, textMsg.Content)
-	//// 对接收的消息进行被动回复
-	////return WXMsgReply(e, textMsg.ToUserName, textMsg.FromUserName)
-	//
-	//repTextMsg := WXRepTextMsg{
-	//	ToUserName:   textMsg.ToUserName,
-	//	FromUserName: textMsg.FromUserName,
-	//	CreateTime:   time.Now().Unix(),
-	//	MsgType:      "text",
-	//	Content:      fmt.Sprintf("[消息回复] - %s", time.Now().Format("2006-01-02 15:04:05")),
-	//}
-	//msg, err := xml.Marshal(&repTextMsg)
-	//if err != nil {
-	//	log.Printf("[消息回复] - 将对象进行XML编码出错: %v\n", err)
-	//	//return
-	//}
-	////_, _ = c.Writer.Write(msg)
-	////return echo.NewHTTPError(http.StatusOK, msg)
-	//
-	//return e.XMLBlob(http.StatusOK, msg)
 
 	// 获取 POST 请求中的消息数据
 	data := make([]byte, e.Request().ContentLength)
@@ -113,12 +102,27 @@ func (ctrl *wechatGongZhong) WXMsgReceive(e echo.Context) error {
 	var replyMsg WXRepTextMsg
 	switch msg.MsgType {
 	case "text":
+
+		res, err := Chat(ctrl.opAi, msg.Content)
+		if err != nil {
+			// 默认回复
+			replyMsg = WXRepTextMsg{
+				ToUserName:   msg.FromUserName,
+				FromUserName: msg.ToUserName,
+				CreateTime:   time.Now().Unix(),
+				MsgType:      "text",
+				Content:      "暂不支持此类消息类型的回复。",
+			}
+			// 将回复消息转换为 XML 格式
+			respData, _ := xml.Marshal(replyMsg)
+			return e.Blob(http.StatusOK, "application/xml", respData)
+		}
 		// 生成文本消息回复
 		replyMsg = WXRepTextMsg{
 			ToUserName:   msg.FromUserName,
 			FromUserName: msg.ToUserName,
 			CreateTime:   time.Now().Unix(),
-			MsgType:      "text",
+			MsgType:      res,
 			Content:      "您好，欢迎关注我的公众号！",
 		}
 	default:
@@ -139,31 +143,40 @@ func (ctrl *wechatGongZhong) WXMsgReceive(e echo.Context) error {
 	return e.Blob(http.StatusOK, "application/xml", respData)
 }
 
-// WXRepTextMsg 微信回复文本消息结构体
-type WXRepTextMsg struct {
-	ToUserName   string
-	FromUserName string
-	CreateTime   int64
-	MsgType      string
-	Content      string
-	// 若不标记XMLName, 则解析后的xml名为该结构体的名称
-	XMLName xml.Name `xml:"xml"`
-}
+func Chat(opAi *openai.Client, input string) (string, error) {
+	//client := openai.NewClient("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")
+	messages := make([]openai.ChatCompletionMessage, 0)
+	//reader := bufio.NewReader(os.Stdin)
 
-// WXMsgReply 微信消息回复
-func WXMsgReply(e echo.Context, fromUser, toUser string) error {
-	repTextMsg := WXRepTextMsg{
-		ToUserName:   toUser,
-		FromUserName: fromUser,
-		CreateTime:   time.Now().Unix(),
-		MsgType:      "text",
-		Content:      fmt.Sprintf("[消息回复] - %s", time.Now().Format("2006-01-02 15:04:05")),
-	}
-	msg, err := xml.Marshal(&repTextMsg)
+	//for {
+	fmt.Print("-> ")
+	//text, _ := reader.ReadString('\n')
+	// convert CRLF to LF
+	input = strings.Replace(input, "\n", "", -1)
+	messages = append(messages, openai.ChatCompletionMessage{
+		Role:    openai.ChatMessageRoleUser,
+		Content: input,
+	})
+
+	resp, err := opAi.CreateChatCompletion(
+		context.Background(),
+		openai.ChatCompletionRequest{
+			Model:    openai.GPT3Dot5Turbo,
+			Messages: messages,
+		},
+	)
+
 	if err != nil {
-		log.Printf("[消息回复] - 将对象进行XML编码出错: %v\n", err)
-		//return
+		fmt.Printf("ChatCompletion error: %v\n", err)
+		//continue
 	}
-	//_, _ = c.Writer.Write(msg)
-	return echo.NewHTTPError(http.StatusOK, msg)
+
+	content := resp.Choices[0].Message.Content
+	messages = append(messages, openai.ChatCompletionMessage{
+		Role:    openai.ChatMessageRoleAssistant,
+		Content: content,
+	})
+	fmt.Println(content)
+	return content, nil
+	//}
 }
