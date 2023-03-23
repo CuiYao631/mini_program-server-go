@@ -149,7 +149,7 @@ func Chat(opAi *openai.Client, input string) (string, error) {
 	//reader := bufio.NewReader(os.Stdin)
 
 	//for {
-	fmt.Print("-> ")
+	//fmt.Print("-> ")
 	//text, _ := reader.ReadString('\n')
 	// convert CRLF to LF
 	input = strings.Replace(input, "\n", "", -1)
