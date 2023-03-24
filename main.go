@@ -61,8 +61,7 @@ func main() {
 	}
 
 	// ChatGPT-3
-	client := openai.NewClient("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")
-
+	client := openai.NewClient("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")
 	//设置静态资源url前缀和目录
 	//这里设置 /static 为静态资源url的前缀，当前程序运行目录下面的static目录为静态资源目录
 	e.Static("/static", "static")

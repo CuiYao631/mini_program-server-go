@@ -180,3 +180,20 @@ func Chat(opAi *openai.Client, input string) (string, error) {
 	return content, nil
 	//}
 }
+
+func ResMsg(input string) string {
+
+	switch input {
+	case "01":
+
+	case "02":
+	case "03":
+	case "04":
+	case "05":
+	case "06":
+	case "07":
+	default:
+		return ""
+	}
+	return ""
+}
