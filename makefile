@@ -8,6 +8,7 @@ dev: export ACCESSKEY=password
 
 dev: export RESOURCES_PHOTO_PATH=res-photo
 dev: export WALLPAPER_PATH=wallpaper
+dev: export OPEN_AI_API_KEY=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
 
 dev:
 	@go run main.go
