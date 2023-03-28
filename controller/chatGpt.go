@@ -5,6 +5,10 @@ import (
 	"net/http"
 )
 
+type ChatMsg struct {
+	Msg string `json:"msg"`
+}
+
 type ChatGpt interface {
 	Chat(e echo.Context) error
 }
@@ -14,8 +18,20 @@ func (ctrl *controller) ChatGptRoute(g *echo.Group) {
 }
 
 func (ctrl *controller) Chat(e echo.Context) error {
+	input := ""
+	mmg := ChatMsg{}
 	msg := e.FormValue("msg")
-	res, err := ctrl.uc.Chat(e.Request().Context(), msg)
+	if err := e.Bind(&mmg); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+	if msg != "" {
+		input = msg
+	}
+	if mmg.Msg != "" {
+		input = mmg.Msg
+	}
+
+	res, err := ctrl.uc.Chat(e.Request().Context(), input)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err)
 	}
