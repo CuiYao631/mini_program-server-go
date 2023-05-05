@@ -8,9 +8,11 @@
 package main
 
 import (
+	"fmt"
 	"github.com/CuiYao631/mini_program-server-go/controller"
 	_ "github.com/CuiYao631/mini_program-server-go/docs"
 	"github.com/CuiYao631/mini_program-server-go/repository"
+	"github.com/CuiYao631/mini_program-server-go/socket"
 	"github.com/CuiYao631/mini_program-server-go/usecase"
 	"github.com/CuiYao631/mini_program-server-go/wechatGongZhong"
 	"github.com/labstack/echo/v4"
@@ -22,6 +24,7 @@ import (
 	echoSwagger "github.com/swaggo/echo-swagger"
 	"html/template"
 	"log"
+	"net"
 	"os"
 )
 
@@ -59,6 +62,12 @@ func main() {
 	if err != nil {
 		log.Fatalf("minio failed: %v", err)
 	}
+	//创建一个服务端实例
+	listen, err := net.Listen("tcp", "127.0.0.1:20000")
+	if err != nil {
+		fmt.Println("listen failed, err:", err)
+		return
+	}
 
 	// ChatGPT-3
 	client := openai.NewClient(os.Getenv("OPEN_AI_API_KEY"))
@@ -72,6 +81,9 @@ func main() {
 		//预编译处理的目的是为了优化后期渲染模版文件的速度
 		Templates: template.Must(template.ParseGlob("views/*.html")),
 	}
+
+	sokt := socket.MakeSocket(listen, client)
+	go sokt.RunSocket()
 
 	//向echo实例注册模版引擎
 	e.Renderer = t
