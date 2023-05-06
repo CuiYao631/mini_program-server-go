@@ -3,7 +3,6 @@ package socket
 import (
 	"bufio"
 	"bytes"
-	"context"
 	"encoding/binary"
 	"fmt"
 	"github.com/sashabaranov/go-openai"
@@ -58,8 +57,8 @@ func (s *socket) ReceiveMessage(conn net.Conn) {
 		}
 		fmt.Println("收到客户端"+client_ip.String()+"端发来的数据：", msg)
 		if msg != "" {
-			//SendMessage(conn, msg)
-			s.Chat(context.Background(), conn, msg)
+			SendMessage(conn, msg)
+			//s.Chat(context.Background(), conn, msg)
 		}
 	}
 }

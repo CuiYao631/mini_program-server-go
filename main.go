@@ -63,7 +63,7 @@ func main() {
 		log.Fatalf("minio failed: %v", err)
 	}
 	//创建一个服务端实例
-	listen, err := net.Listen("tcp", "127.0.0.1:20000")
+	listen, err := net.Listen("tcp", "0.0.0.0:8899")
 	if err != nil {
 		fmt.Println("listen failed, err:", err)
 		return
