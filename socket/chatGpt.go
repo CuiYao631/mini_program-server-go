@@ -5,11 +5,11 @@ import (
 	"errors"
 	"fmt"
 	"github.com/sashabaranov/go-openai"
+	"golang.org/x/net/websocket"
 	"io"
-	"net"
 )
 
-func (s *socket) Chat(ctx context.Context, conn net.Conn, input string) (string, error) {
+func (s *socket) Chat(ctx context.Context, conn *websocket.Conn, input string) (string, error) {
 	req := openai.ChatCompletionRequest{
 		Model:     openai.GPT3Dot5Turbo,
 		MaxTokens: 2000,
@@ -42,18 +42,25 @@ func (s *socket) Chat(ctx context.Context, conn net.Conn, input string) (string,
 		}
 
 		fmt.Printf(response.Choices[0].Delta.Content)
-		SendMessage(conn, response.Choices[0].Delta.Content)
+		sendMessage(conn, response.Choices[0].Delta.Content)
 	}
 	return "content", nil
 }
-func SendMessage(conn net.Conn, message string) {
-	data, err := Encode(message)
-	if err != nil {
-		fmt.Println(err.Error())
-	}
-	_, err = conn.Write(data) // 发送数据
-	if err != nil {
-		fmt.Println(err.Error())
+
+func sendMessage(conn *websocket.Conn, msg string) {
+	//msg := replyMsg.Uid + "说:" + replyMsg.Msg
+	//if connUid == replyMsg.Uid {
+	//	fmt.Println(msg)
+	//	if replyMsg.Type == "login" {
+	//		msg = "你好！我是你的AI助理，有什么可以帮助你的吗？"
+	//	} else {
+	//		msg = "你说：" + replyMsg.Msg
+	//	}
+	//
+	//}
+
+	if err := websocket.Message.Send(conn, msg); err != nil {
+		fmt.Println("Can't send")
 	}
 
 }

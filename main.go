@@ -83,7 +83,6 @@ func main() {
 	}
 
 	sokt := socket.MakeSocket(listen, client)
-	go sokt.RunSocket()
 
 	//向echo实例注册模版引擎
 	e.Renderer = t
@@ -94,6 +93,7 @@ func main() {
 
 	wgc := wechatGongZhong.MakeWechatGongZhong(client)
 	//route
+
 	e.GET("/", ctrl.Root)
 
 	//公众号小程序回调
@@ -117,6 +117,7 @@ func main() {
 	//ChatGPT
 	cg := e.Group("/chatGpt")
 	ctrl.ChatGptRoute(cg)
+	e.GET("/ws", sokt.Socket)
 
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
 	e.Logger.Fatal(e.Start(":8082"))
