@@ -43,9 +43,11 @@ func (s *socket) Socket(c echo.Context) error {
 				connMap[replyMsg.Uid] = ws
 				fmt.Println(connMap)
 			}
-			for k, v := range connMap {
-				go s.Chat(c.Request().Context(), v, k)
-				//go sendMessage(replyMsg, v, k)
+			if replyMsg.Type != "login" {
+				for _, v := range connMap {
+					go s.Chat(c.Request().Context(), v, replyMsg.Msg)
+					//go sendMessage(v, replyMsg.Msg)
+				}
 			}
 
 		}
