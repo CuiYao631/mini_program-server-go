@@ -1,39 +1,51 @@
 package controller
 
 import (
+	"encoding/json"
+	"fmt"
 	"github.com/labstack/echo/v4"
-	"net/http"
+	"golang.org/x/net/websocket"
 )
 
-type ChatMsg struct {
-	Msg string `json:"msg"`
+type MsgConfig struct {
+	Type string `json:"type,omitempty"`
+	Uid  string `json:"uid,omitempty"`
+	Msg  string `json:"msg,omitempty"`
 }
 
-type ChatGpt interface {
-	Chat(e echo.Context) error
-}
+var connMap = make(map[string]*websocket.Conn)
 
-func (ctrl *controller) ChatGptRoute(g *echo.Group) {
-	g.POST("/chat", ctrl.Chat)
-}
+func (ctrl *controller) GPTChat(c echo.Context) error {
+	websocket.Handler(func(ws *websocket.Conn) {
+		var err error
+		for {
+			var reply string
 
-func (ctrl *controller) Chat(e echo.Context) error {
-	input := ""
-	mmg := ChatMsg{}
-	msg := e.FormValue("msg")
-	if err := e.Bind(&mmg); err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
-	}
-	if msg != "" {
-		input = msg
-	}
-	if mmg.Msg != "" {
-		input = mmg.Msg
-	}
+			if err = websocket.Message.Receive(ws, &reply); err != nil {
+				fmt.Println("Can't receive")
+				break
+			}
+			replyMsg := MsgConfig{}
+			json.Unmarshal([]byte(reply), &replyMsg)
+			if replyMsg.Type == "login" && replyMsg.Uid != "" {
+				connMap[replyMsg.Uid] = ws
+				fmt.Println("connMap-->>>>", connMap)
+				//go sendMessage(connMap[replyMsg.Uid], replyMsg.Msg)
+			}
+			//CPT-chat
+			if replyMsg.Type == "msg" {
+				go ctrl.uc.Chat(c.Request().Context(), connMap[replyMsg.Uid], replyMsg.Msg)
+			}
+			//DALL-E 2 image generation
+			if replyMsg.Type == "img" {
 
-	res, err := ctrl.uc.Chat(e.Request().Context(), input)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, err)
-	}
-	return echo.NewHTTPError(http.StatusOK, res)
+			}
+			//Audio Captions
+			if replyMsg.Type == "audio" {
+
+			}
+
+		}
+	}).ServeHTTP(c.Response(), c.Request())
+	return nil
 }

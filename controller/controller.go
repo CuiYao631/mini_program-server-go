@@ -8,8 +8,10 @@
 package controller
 
 import (
+	"github.com/sashabaranov/go-openai"
 	"html/template"
 	"io"
+	"net"
 	"net/http"
 
 	"github.com/CuiYao631/mini_program-server-go/entity"
@@ -38,12 +40,15 @@ type Controller interface {
 	Wallpaper
 }
 type controller struct {
-	uc usecase.Usecase
+	uc     usecase.Usecase
+	listen net.Listener
+	opAi   *openai.Client
 }
 
-func MakeController(uc usecase.Usecase) *controller {
-	return &controller{uc: uc}
+func MakeController(uc usecase.Usecase, listen net.Listener, opAi *openai.Client) *controller {
+	return &controller{uc: uc, listen: listen, opAi: opAi}
 }
+
 func (ctrl *controller) Root(c echo.Context) error {
 
 	return c.Render(200, "index.html", "World")

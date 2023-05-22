@@ -12,7 +12,6 @@ import (
 	"github.com/CuiYao631/mini_program-server-go/controller"
 	_ "github.com/CuiYao631/mini_program-server-go/docs"
 	"github.com/CuiYao631/mini_program-server-go/repository"
-	"github.com/CuiYao631/mini_program-server-go/socket"
 	"github.com/CuiYao631/mini_program-server-go/usecase"
 	"github.com/CuiYao631/mini_program-server-go/wechatGongZhong"
 	"github.com/labstack/echo/v4"
@@ -82,14 +81,12 @@ func main() {
 		Templates: template.Must(template.ParseGlob("views/*.html")),
 	}
 
-	sokt := socket.MakeSocket(listen, client)
-
 	//向echo实例注册模版引擎
 	e.Renderer = t
 
 	response := repository.MakeRepository(nil)
 	pro := usecase.MakeUsecase(response, minioClient, client)
-	ctrl := controller.MakeController(pro)
+	ctrl := controller.MakeController(pro, listen, client)
 
 	wgc := wechatGongZhong.MakeWechatGongZhong(client)
 	//route
@@ -115,9 +112,7 @@ func main() {
 	m := e.Group("/minio")
 	ctrl.MinioRoute(m)
 	//ChatGPT
-	cg := e.Group("/chatGpt")
-	ctrl.ChatGptRoute(cg)
-	e.GET("/ws", sokt.Socket)
+	e.GET("/ws", ctrl.GPTChat)
 
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
 	e.Logger.Fatal(e.Start(":8082"))
