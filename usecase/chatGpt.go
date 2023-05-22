@@ -55,7 +55,7 @@ func (uc *usecase) Chat(ctx context.Context, conn *websocket.Conn, input string)
 
 			sendMessage(conn, response.Choices[0].Delta.Content)
 		} else {
-			sendMessage(conn, "哎呀,我开小差了,请重新输入")
+			//sendMessage(conn, "哎呀,我开小差了,请重新输入")
 			break
 		}
 
