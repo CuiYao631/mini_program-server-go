@@ -20,7 +20,6 @@ func (ctrl *controller) GPTChat(c echo.Context) error {
 		var err error
 		for {
 			var reply string
-
 			if err = websocket.Message.Receive(ws, &reply); err != nil {
 				fmt.Println("Can't receive")
 				break
@@ -38,7 +37,7 @@ func (ctrl *controller) GPTChat(c echo.Context) error {
 			}
 			//DALL-E 2 image generation
 			if replyMsg.Type == "img" {
-
+				go ctrl.uc.GenerateImages(c.Request().Context(), connMap[replyMsg.Uid], replyMsg.Msg)
 			}
 			//Audio Captions
 			if replyMsg.Type == "audio" {

@@ -7,10 +7,12 @@ import (
 	"github.com/sashabaranov/go-openai"
 	"golang.org/x/net/websocket"
 	"io"
+	"log"
 )
 
 type ChatGpt interface {
 	Chat(ctx context.Context, conn *websocket.Conn, input string)
+	GenerateImages(ctx context.Context, conn *websocket.Conn, input string)
 }
 
 func (uc *usecase) Chat(ctx context.Context, conn *websocket.Conn, input string) {
@@ -59,6 +61,27 @@ func (uc *usecase) Chat(ctx context.Context, conn *websocket.Conn, input string)
 			break
 		}
 
+	}
+}
+
+func (uc *usecase) GenerateImages(ctx context.Context, conn *websocket.Conn, input string) {
+
+	reqUrl := openai.ImageRequest{
+		Prompt:         input,
+		Size:           openai.CreateImageSize256x256,
+		ResponseFormat: openai.CreateImageResponseFormatURL,
+		N:              1,
+	}
+
+	respUrl, err := uc.opAi.CreateImage(ctx, reqUrl)
+	if err != nil {
+		fmt.Printf("Image creation error: %v\n", err)
+		return
+	}
+	for _, v := range respUrl.Data {
+		///fmt.Println(v.URL)
+		log.Println(v.URL)
+		sendMessage(conn, v.URL)
 	}
 }
 

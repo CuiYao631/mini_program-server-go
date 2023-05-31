@@ -3,7 +3,6 @@ package schema
 import (
 	"entgo.io/ent"
 	"entgo.io/ent/schema/field"
-	"github.com/CuiYao631/mini_program-server-go/entity"
 	"github.com/segmentio/ksuid"
 )
 
@@ -19,14 +18,9 @@ func (User) Fields() []ent.Field {
 			func() string {
 				return ksuid.New().String()
 			}), //id
-		field.String("name"),
-		field.String("password"),
-		field.Enum("user_type").Values(
-			entity.UserTypePublisher.String(),
-			entity.UserTypeWechat.String(),
-			entity.UserTypeLogin.String(),
-			entity.UserTypeTourist.String(),
-		),
+		field.String("UUID").Optional(),      //UUID
+		field.String("name").Optional(),      //姓名
+		field.String("photo_url").Optional(), //头像
 	}
 }
 
