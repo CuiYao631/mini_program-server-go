@@ -16,6 +16,10 @@ type ChatGpt interface {
 }
 
 func (uc *usecase) Chat(ctx context.Context, conn *websocket.Conn, input string) {
+
+	//暂时禁用
+	return
+
 	req := openai.ChatCompletionRequest{
 		Model:     openai.GPT3Dot5Turbo,
 		MaxTokens: 2000,
