@@ -97,33 +97,34 @@ func (ctrl *wechatGongZhong) WXMsgReceive(e echo.Context) error {
 	// 将消息数据解析为一个 XML 结构体
 	var msg WXTextMsg
 	xml.Unmarshal(data, &msg)
+	fmt.Println(msg)
 
 	// 根据消息类型生成回复内容
 	var replyMsg WXRepTextMsg
 	switch msg.MsgType {
 	case "text":
 
-		res, err := Chat(ctrl.opAi, msg.Content)
-		if err != nil {
-			// 默认回复
-			replyMsg = WXRepTextMsg{
-				ToUserName:   msg.FromUserName,
-				FromUserName: msg.ToUserName,
-				CreateTime:   time.Now().Unix(),
-				MsgType:      "text",
-				Content:      "暂不支持此类消息类型的回复。",
-			}
-			// 将回复消息转换为 XML 格式
-			respData, _ := xml.Marshal(replyMsg)
-			return e.Blob(http.StatusOK, "application/xml", respData)
-		}
+		//res, err := Chat(ctrl.opAi, msg.Content)
+		//if err != nil {
+		//	// 默认回复
+		//	replyMsg = WXRepTextMsg{
+		//		ToUserName:   msg.FromUserName,
+		//		FromUserName: msg.ToUserName,
+		//		CreateTime:   time.Now().Unix(),
+		//		MsgType:      "text",
+		//		Content:      "暂不支持此类消息类型的回复。",
+		//	}
+		//	// 将回复消息转换为 XML 格式
+		//	respData, _ := xml.Marshal(replyMsg)
+		//	return e.Blob(http.StatusOK, "application/xml", respData)
+		//}
 		// 生成文本消息回复
 		replyMsg = WXRepTextMsg{
 			ToUserName:   msg.FromUserName,
 			FromUserName: msg.ToUserName,
 			CreateTime:   time.Now().Unix(),
 			MsgType:      "text",
-			Content:      res,
+			Content:      msg.Content,
 		}
 	default:
 		// 默认回复
